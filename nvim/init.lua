@@ -18,6 +18,7 @@ require('kroucher.lsp')
 require('kroucher.autopairs')
 require('kroucher.colors')
 require('kroucher.null-ls')
+require('kroucher.telescope')
 
 vim.wo.number = true
 vim.wo.relativenumber = true

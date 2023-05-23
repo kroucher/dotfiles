@@ -1,6 +1,6 @@
 local actions = require("telescope.actions")
 
-require('telescope').setup({
+require("telescope").setup({
   defaults = {
     mappings = {
       i = {
@@ -13,13 +13,16 @@ require('telescope').setup({
     },
   },
   extensions = {
-	  fzf = {
-		  fuzzy = true,
-		  override_generic_sorter = true,
-		  override_file_sorter = true,
-		  case_mode = "smart_case",
-	  }
-  }
+    fzf = {
+      fuzzy = true,
+      override_generic_sorter = true,
+      override_file_sorter = true,
+      case_mode = "smart_case",
+    },
+  },
 })
 
-require('telescope').load_extension('fzf')
+require("telescope").load_extension("fzf")
+
+vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "#1b1e28" })
+vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "none" })
