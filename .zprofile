@@ -1,13 +1,17 @@
 autoload -Uz compinit
 compinit
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [ -f /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 #compdef gt
 ###-begin-gt-completions-###
 #
 # yargs command completion script
-#
-# Installation: /opt/homebrew/bin/gt completion >> ~/.zshrc
+
 #    or /opt/homebrew/bin/gt completion >> ~/.zprofile on OSX.
 #
 _gt_yargs_completions()
@@ -21,4 +25,5 @@ _gt_yargs_completions()
 }
 compdef _gt_yargs_completions gt
 ###-end-gt-completions-###
+
 
