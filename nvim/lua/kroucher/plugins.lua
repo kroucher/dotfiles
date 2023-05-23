@@ -77,7 +77,7 @@ use({ "akinsho/bufferline.nvim", tag = "*", requires = "nvim-tree/nvim-web-devic
 use 'wakatime/vim-wakatime'
 
 -- prettier
-use 'prettier/vim-prettier'
+use 'MunifTanjim/prettier.nvim'
 
 -- comment out lines
 use {

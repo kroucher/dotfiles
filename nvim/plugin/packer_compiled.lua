@@ -230,6 +230,11 @@ _G.packer_plugins = {
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/poimandres.nvim",
     url = "https://github.com/olivercederborg/poimandres.nvim"
   },
+  ["prettier.nvim"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/prettier.nvim",
+    url = "https://github.com/MunifTanjim/prettier.nvim"
+  },
   ["telescope-file-browser.nvim"] = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/telescope-file-browser.nvim",
@@ -249,11 +254,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/tokyonight.nvim",
     url = "https://github.com/folke/tokyonight.nvim"
-  },
-  ["vim-prettier"] = {
-    loaded = true,
-    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/vim-prettier",
-    url = "https://github.com/prettier/vim-prettier"
   },
   ["vim-visual-multi"] = {
     loaded = true,

@@ -17,6 +17,7 @@ require('kroucher.gitsigns')
 require('kroucher.lsp')
 require('kroucher.autopairs')
 require('kroucher.colors')
+require('kroucher.null-ls')
 
 vim.wo.number = true
 vim.wo.relativenumber = true
@@ -41,8 +42,4 @@ autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 vim.g.gitblame_date_format = "%r (%Y-%m-%d)"
 vim.g.gitblame_message_template = "<author>, <date> • <summary>"
 
--- format on save
-vim.cmd [[
-  autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx PrettierAsync
-]]
 
