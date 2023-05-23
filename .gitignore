@@ -1,5 +1,6 @@
 /github-copilot
 nvim/pack/*
+tmux/plugins/*
 NuGet
 Ryujinx
 configstore
