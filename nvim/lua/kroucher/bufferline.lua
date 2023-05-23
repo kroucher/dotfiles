@@ -5,12 +5,15 @@ end
 
 bufferline.setup({
   options = {
+    indicator = {
+	    style = "underline"
+    },
     numbers = "none",
+    themable = true,
     close_command = "bdelete! %d",
     right_mouse_command = "bdelete! %d",
     left_mouse_command = "buffer %d",
     middle_mouse_command = nil,
-    indicator = { icon = "▎", style = "icon" },
     buffer_close_icon = "",
     modified_icon = "",
     close_icon = "",
@@ -25,7 +28,7 @@ bufferline.setup({
 	    return vim.fn.getcwd()
     end, highlight = "Directory", padding = 1,
     text_align = "left" } },
-    show_buffer_icons = true,
+    show_buffer_icons = false,
     show_buffer_close_icons = false,
     show_close_icon = false,
     show_tab_indicators = true,
