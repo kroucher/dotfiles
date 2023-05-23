@@ -6,7 +6,7 @@ end
 bufferline.setup({
   options = {
     indicator = {
-	    style = "underline"
+      style = "underline",
     },
     numbers = "none",
     themable = true,
@@ -24,10 +24,17 @@ bufferline.setup({
     tab_size = 21,
     diagnostics = "nvim_lsp",
     diagnostics_update_in_insert = true,
-    offsets = { { filetype = "NvimTree", text = function()
-	    return vim.fn.getcwd()
-    end, highlight = "Directory", padding = 1,
-    text_align = "left" } },
+    offsets = {
+      {
+        filetype = "NvimTree",
+        text = function()
+          return vim.fn.getcwd()
+        end,
+        highlight = "Directory",
+        padding = 1,
+        text_align = "left",
+      },
+    },
     show_buffer_icons = false,
     show_buffer_close_icons = false,
     show_close_icon = false,
@@ -39,10 +46,10 @@ bufferline.setup({
   },
   highlights = {
     fill = {
-      bg = '#0e1017',
+      bg = "#0e1017",
     },
     background = {
-      bg = '#0e1017',
+      bg = "#0e1017",
     },
   },
 })
