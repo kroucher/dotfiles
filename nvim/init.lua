@@ -28,6 +28,8 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldlevel = 99
 
+vim.opt.clipboard = "unnamedplus"
+
 local function open_nvim_tree(data)
   local directory = vim.fn.isdirectory(data.file) == 1
   if not directory then
