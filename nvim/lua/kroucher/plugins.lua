@@ -69,7 +69,7 @@ packer.startup(function(use)
   use("lunarvim/darkplus.nvim")
   use("folke/tokyonight.nvim")
   use({ "bluz71/vim-moonfly-colors", as = "moonfly" })
-
+  use("karb94/neoscroll.nvim")
   -- CSS Colors
   use("norcalli/nvim-colorizer.lua")
 
