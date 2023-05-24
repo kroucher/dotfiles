@@ -99,3 +99,14 @@ lspconfig.lua_ls.setup({
     -- },
   },
 })
+
+-- configure eslint
+lspconfig.eslint.setup({
+  capabilities = capabilities,
+  on_attach = function(bufnr)
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = bufnr,
+      command = "EslintFixAll",
+    })
+  end,
+})
