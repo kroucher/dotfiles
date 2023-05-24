@@ -5,8 +5,6 @@ vim.g.loaded_netrwPlugin = 1
 local autocmd = vim.api.nvim_create_autocmd
 
 require("kroucher.plugins")
-require("kroucher.mason-config")
-require("kroucher.typescript")
 require("kroucher.bufferline")
 require("kroucher.treesitter")
 require("kroucher.nvim-tree-config")
@@ -14,11 +12,14 @@ require("kroucher.keymap")
 require("kroucher.lualine")
 require("kroucher.comment")
 require("kroucher.gitsigns")
-require("kroucher.lsp")
 require("kroucher.autopairs")
 require("kroucher.colors")
-require("kroucher.null-ls")
 require("kroucher.telescope")
+require("kroucher.nvim-cmp")
+require("kroucher.lsp.mason")
+require("kroucher.lsp.lspsaga")
+require("kroucher.lsp.lspconfig")
+require("kroucher.lsp.null-ls")
 
 vim.wo.number = true
 vim.wo.relativenumber = true

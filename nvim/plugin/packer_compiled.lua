@@ -100,6 +100,16 @@ _G.packer_plugins = {
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp",
     url = "https://github.com/hrsh7th/cmp-nvim-lsp"
   },
+  ["cmp-path"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/cmp-path",
+    url = "https://github.com/hrsh7th/cmp-path"
+  },
+  cmp_luasnip = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/cmp_luasnip",
+    url = "https://github.com/saadparwaiz1/cmp_luasnip"
+  },
   ["copilot.vim"] = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/copilot.vim",
@@ -110,6 +120,16 @@ _G.packer_plugins = {
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/darkplus.nvim",
     url = "https://github.com/lunarvim/darkplus.nvim"
   },
+  ["diffview.nvim"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/diffview.nvim",
+    url = "https://github.com/sindrets/diffview.nvim"
+  },
+  ["friendly-snippets"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/friendly-snippets",
+    url = "https://github.com/rafamadriz/friendly-snippets"
+  },
   ["git-blame.nvim"] = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/git-blame.nvim",
@@ -119,11 +139,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
-  },
-  ["lsp-zero.nvim"] = {
-    loaded = true,
-    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/lsp-zero.nvim",
-    url = "https://github.com/VonHeikemen/lsp-zero.nvim"
   },
   ["lspkind-nvim"] = {
     loaded = true,
@@ -144,6 +159,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/mason-lspconfig.nvim",
     url = "https://github.com/williamboman/mason-lspconfig.nvim"
+  },
+  ["mason-null-ls.nvim"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/mason-null-ls.nvim",
+    url = "https://github.com/jayp0521/mason-null-ls.nvim"
   },
   ["mason.nvim"] = {
     loaded = true,
@@ -235,6 +255,11 @@ _G.packer_plugins = {
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/prettier.nvim",
     url = "https://github.com/MunifTanjim/prettier.nvim"
   },
+  ["stylua-nvim"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/stylua-nvim",
+    url = "https://github.com/ckipp01/stylua-nvim"
+  },
   ["telescope-file-browser.nvim"] = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/telescope-file-browser.nvim",
@@ -254,6 +279,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/tokyonight.nvim",
     url = "https://github.com/folke/tokyonight.nvim"
+  },
+  ["typescript.nvim"] = {
+    loaded = true,
+    path = "/Users/danieldeveney/.local/share/nvim/site/pack/packer/start/typescript.nvim",
+    url = "https://github.com/jose-elias-alvarez/typescript.nvim"
   },
   ["vim-visual-multi"] = {
     loaded = true,

@@ -1,3 +1,16 @@
+-- auto install packer if not installed
+local ensure_packer = function()
+  local fn = vim.fn
+  local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+  if fn.empty(fn.glob(install_path)) > 0 then
+    fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
+    vim.cmd([[packadd packer.nvim]])
+    return true
+  end
+  return false
+end
+local packer_bootstrap = ensure_packer() -- true if packer was just installed
+
 local status, packer = pcall(require, "packer")
 if not status then
   print("Packer is not installed")
@@ -6,6 +19,15 @@ end
 
 vim.cmd([[packadd packer.nvim]])
 
+-- autocommand that reloads neovim and installs/updates/removes plugins
+-- when file is saved
+vim.cmd([[ 
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+  augroup end
+]])
+
 packer.startup(function(use)
   use("wbthomason/packer.nvim")
 
@@ -13,47 +35,52 @@ packer.startup(function(use)
   use("nvim-treesitter/nvim-treesitter", {
     run = ":TSUpdate",
   })
-  use("JoosepAlviste/nvim-ts-context-commentstring")
 
   use("p00f/nvim-ts-rainbow") -- bracket colorizer
 
-  use({
-    "VonHeikemen/lsp-zero.nvim",
-    branch = "v2.x",
-    requires = {
-      -- LSP Support
-      { "neovim/nvim-lspconfig" }, -- Required
-      { -- Optional
-        "williamboman/mason.nvim",
-        run = function()
-          pcall(vim.cmd, "MasonUpdate")
-        end,
-      },
-      { "williamboman/mason-lspconfig.nvim" }, -- Optional
+  -- autocompletion
+  use("hrsh7th/nvim-cmp")
+  use("hrsh7th/cmp-buffer")
+  use("hrsh7th/cmp-path")
 
-      -- Autocompletion
-      { "hrsh7th/nvim-cmp" }, -- Required
-      { "hrsh7th/cmp-nvim-lsp" }, -- Required
-      { "L3MON4D3/LuaSnip" }, -- Required
-    },
-  })
+  -- snippets
+  use("L3MON4D3/LuaSnip")
+  use("saadparwaiz1/cmp_luasnip")
+  use("rafamadriz/friendly-snippets")
 
-  use("nvim-lualine/lualine.nvim") -- Statusline
-  use("nvim-lua/plenary.nvim") -- Common utilities
-  use("onsails/lspkind-nvim") -- vscode-like pictograms
-  use("hrsh7th/cmp-buffer") -- nvim-cmp source for buffer words
+  -- LSP - manage and install servers
+  use("williamboman/mason.nvim")
+  use("williamboman/mason-lspconfig.nvim")
 
-  use("olivercederborg/poimandres.nvim") -- Theme
-  use("lunarvim/darkplus.nvim") -- Theme
-  use("folke/tokyonight.nvim") -- Theme
+  -- LSP - configure LSP servers
+  use("neovim/nvim-lspconfig")
+  use("hrsh7th/cmp-nvim-lsp")
+  use({ "glepnir/lspsaga.nvim", branch = "main" })
+  use("jose-elias-alvarez/null-ls.nvim")
+  use("jayp0521/mason-null-ls.nvim") -- bridges gap b/w mason & null-ls
+  use("onsails/lspkind-nvim")
+  use("jose-elias-alvarez/typescript.nvim") -- additional functionality for typescript server (e.g. rename file & update imports)
+
+  -- lualine
+  use("nvim-lualine/lualine.nvim")
+
+  -- Themes
+  use("olivercederborg/poimandres.nvim")
+  use("lunarvim/darkplus.nvim")
+  use("folke/tokyonight.nvim")
   use({ "bluz71/vim-moonfly-colors", as = "moonfly" })
 
-  use("norcalli/nvim-colorizer.lua") -- colorizer for css
+  -- CSS Colors
+  use("norcalli/nvim-colorizer.lua")
 
+  -- Copilot
   use("github/copilot.vim") -- Copilot
 
+  -- Shared Utils
   use("kyazdani42/nvim-web-devicons") -- File icons
+  use("nvim-lua/plenary.nvim")
 
+  -- Telescope
   use({
     "nvim-telescope/telescope.nvim",
     requires = { { "nvim-lua/plenary.nvim" } },
@@ -61,15 +88,15 @@ packer.startup(function(use)
 
   use("nvim-telescope/telescope-file-browser.nvim") -- File browser
   use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
+
+  -- Autopairs
   use("windwp/nvim-autopairs") -- Auto pairs
   use("windwp/nvim-ts-autotag") -- Auto close and rename html tag
-  use("glepnir/lspsaga.nvim") -- LSP UIs
-  use("L3MON4D3/LuaSnip") -- Snippets
-  use("jose-elias-alvarez/null-ls.nvim") -- LSP
 
-  -- explorer
+  -- File explorer
   use("kyazdani42/nvim-tree.lua") -- file explorer
 
+  -- Bufferline
   use({ "akinsho/bufferline.nvim", tag = "*", requires = "nvim-tree/nvim-web-devicons" }) -- Bufferline
 
   -- wakatime
@@ -88,10 +115,14 @@ packer.startup(function(use)
       require("Comment").setup()
     end,
   })
+  use("JoosepAlviste/nvim-ts-context-commentstring")
 
+  -- Git
   use("lewis6991/gitsigns.nvim") -- see git changes
   use({ "TimUntersberger/neogit", requires = "nvim-lua/plenary.nvim" })
   use("f-person/git-blame.nvim") -- see who wrote the lines
+  use("sindrets/diffview.nvim") -- see git diff
 
+  -- Multi-cursor
   use("mg979/vim-visual-multi")
 end)
