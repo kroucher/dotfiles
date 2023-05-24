@@ -20,7 +20,6 @@ require("kroucher.lsp.mason")
 require("kroucher.lsp.lspsaga")
 require("kroucher.lsp.lspconfig")
 require("kroucher.lsp.null-ls")
-
 vim.wo.number = true
 vim.wo.relativenumber = true
 

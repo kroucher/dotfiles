@@ -74,12 +74,29 @@ packer.startup(function(use)
   use("norcalli/nvim-colorizer.lua")
 
   -- Copilot
-  use("github/copilot.vim") -- Copilot
+  use({
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },
+      })
+    end,
+  })
+  -- Add Copilot to CMP
+  use({
+    "zbirenbaum/copilot-cmp",
+    after = { "copilot.lua" },
+    config = function()
+      require("copilot_cmp").setup()
+    end,
+  })
 
   -- Shared Utils
-  use("kyazdani42/nvim-web-devicons") -- File icons
+  use("kyazdani42/nvim-web-devicons")
   use("nvim-lua/plenary.nvim")
-
   -- Telescope
   use({
     "nvim-telescope/telescope.nvim",
