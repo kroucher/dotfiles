@@ -62,12 +62,27 @@ cmp.setup({
       "i",
       "s",
     }),
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, {
+      "i",
+      "s",
+    }),
   }),
   sources = cmp.config.sources({
     { name = "copilot" },
     { name = "nvim_lsp" },
-    { name = "luasnip" },
+    { name = "nvim_lua" },
     { name = "buffer" },
     { name = "path" },
   }),
+  experimental = {
+    ghost_text = true,
+  },
 })
