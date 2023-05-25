@@ -80,7 +80,7 @@ packer.startup(function(use)
     event = "InsertEnter",
     config = function()
       require("copilot").setup({
-        suggestion = { enabled = false },
+        suggestion = { enabled = true },
         panel = { enabled = false },
       })
     end,
@@ -91,6 +91,14 @@ packer.startup(function(use)
     after = { "copilot.lua" },
     config = function()
       require("copilot_cmp").setup()
+    end,
+  })
+
+  -- Tmux integration
+  use({
+    "aserowy/tmux.nvim",
+    config = function()
+      return require("tmux").setup()
     end,
   })
 

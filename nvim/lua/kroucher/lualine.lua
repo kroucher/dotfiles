@@ -1,7 +1,7 @@
 require("lualine").setup({
   options = {
     icons_enabled = true,
-    theme = "poimandres",
+    theme = "codedark",
   },
   sections = {
     lualine_a = { "mode" },

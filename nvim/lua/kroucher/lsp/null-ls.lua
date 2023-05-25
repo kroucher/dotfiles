@@ -62,7 +62,6 @@ prettier.setup({
     "json",
     "scss",
     "less",
-    "lua",
   },
   cli_options = {
     arrow_parens = "always",
