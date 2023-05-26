@@ -102,6 +102,8 @@ packer.startup(function(use)
     end,
   })
 
+  -- Find and replace
+  use("nvim-pack/nvim-spectre")
   -- Highlight patterns
   use("echasnovski/mini.hipatterns")
   -- Shared Utils

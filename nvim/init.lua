@@ -22,6 +22,7 @@ require("kroucher.lsp.lspconfig")
 require("kroucher.lsp.null-ls")
 require("kroucher.neoscroll")
 require("kroucher.hipatterns")
+require("kroucher.spectre")
 
 vim.wo.number = true
 vim.wo.relativenumber = true
