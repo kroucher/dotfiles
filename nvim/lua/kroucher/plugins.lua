@@ -124,7 +124,10 @@ packer.startup(function(use)
   use("kyazdani42/nvim-tree.lua") -- file explorer
 
   -- Bufferline
-  use({ "akinsho/bufferline.nvim", tag = "*", requires = "nvim-tree/nvim-web-devicons" }) -- Bufferline
+  -- use({ "akinsho/bufferline.nvim", tag = "*", requires = "nvim-tree/nvim-web-devicons" }) -- Bufferline
+
+  -- Barbar
+  use("romgrk/barbar.nvim")
 
   -- wakatime
   use("wakatime/vim-wakatime")
