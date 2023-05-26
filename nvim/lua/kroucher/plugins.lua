@@ -102,6 +102,8 @@ packer.startup(function(use)
     end,
   })
 
+  -- Highlight patterns
+  use("echasnovski/mini.hipatterns")
   -- Shared Utils
   use("kyazdani42/nvim-web-devicons")
   use("nvim-lua/plenary.nvim")
