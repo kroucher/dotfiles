@@ -5,7 +5,7 @@ vim.g.loaded_netrwPlugin = 1
 local autocmd = vim.api.nvim_create_autocmd
 
 require("kroucher.plugins")
-require("kroucher.barbar")
+require("kroucher.bufferline")
 require("kroucher.treesitter")
 require("kroucher.nvim-tree-config")
 require("kroucher.keymap")
