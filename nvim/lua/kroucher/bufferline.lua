@@ -5,6 +5,7 @@ end
 
 bufferline.setup({
   options = {
+    mode = "buffers",
     numbers = "none",
     themable = true,
     close_command = "bdelete! %d",
@@ -37,8 +38,28 @@ bufferline.setup({
     show_close_icon = false,
     show_tab_indicators = true,
     persist_buffer_sort = true,
-    separator_style = "thin",
+    separator_style = "slant",
     enforce_regular_tabs = true,
     always_show_bufferline = true,
+  },
+  highlights = {
+    separator = {
+      fg = "#252b37",
+      bg = "#1b1e28",
+    },
+    separator_selected = {
+      fg = "#252b37",
+    },
+    background = {
+      fg = "#a6accd",
+      bg = "#1b1e28",
+    },
+    buffer_selected = {
+      fg = "#FFFFFF",
+      bg = "#1b1d28",
+    },
+    fill = {
+      bg = "#252b37",
+    },
   },
 })
