@@ -31,6 +31,14 @@ vim.cmd([[
 packer.startup(function(use)
   use("wbthomason/packer.nvim")
 
+  -- Dashboard
+  use({
+    "goolord/alpha-nvim",
+    config = function()
+      require("alpha").setup(require("alpha.themes.dashboard").config)
+    end,
+  })
+
   -- syntax highlighting
   use("nvim-treesitter/nvim-treesitter", {
     run = ":TSUpdate",
