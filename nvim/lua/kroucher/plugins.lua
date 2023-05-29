@@ -102,6 +102,9 @@ packer.startup(function(use)
     end,
   })
 
+  -- Multiple Cursors
+  use("terryma/vim-multiple-cursors")
+
   -- Tmux integration
   use({
     "aserowy/tmux.nvim",
