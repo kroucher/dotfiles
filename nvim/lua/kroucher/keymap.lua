@@ -32,3 +32,6 @@ vim.keymap.set("n", "<leader>gs", neogit.open, {})
 -- Center Screen
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true })
+
+-- find and replace
+vim.keymap.set("n", "<leader>fr", "*``cgn", { noremap = true, silent = true })
