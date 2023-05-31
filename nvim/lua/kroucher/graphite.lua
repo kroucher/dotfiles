@@ -98,11 +98,37 @@ function graphite.gt_status()
 end
 
 function graphite.gt_branch_checkout()
-  -- Create a new terminal buffer
-  local buf = vim.api.nvim_create_buf(true, false)
+  -- Run the gt branch checkout command non-interactively and capture its output
+  -- Run the gt log short command non-interactively and capture its output
+  local output = vim.fn.systemlist("gt log short")
+
+  -- Parse the output to extract the branch names
+  local branches = {}
+  for _, line in ipairs(output) do
+    local branch = line:match("[◯│◉─┘%s]+(.*)")
+    if branch and #branch > 0 then
+      -- Add the line to the branches table
+      table.insert(branches, line)
+    end
+  end
+
+  --Add instructions to the branches table
+
+  -- Add instructions to the branches table
+  table.insert(branches, "")
+  table.insert(
+    branches,
+    "Use the arrow keys to navigate, press Enter to select a branch, and press q to close this window."
+  )
+
+  -- Create a new buffer
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  -- Set the buffer's lines to the branch names
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, branches)
 
   -- Create a new window for the buffer
-  local win = vim.api.nvim_open_win(buf, true, {
+  vim.api.nvim_open_win(buf, true, {
     relative = "editor",
     width = 80,
     height = 20,
@@ -111,25 +137,40 @@ function graphite.gt_branch_checkout()
     border = "single",
   })
 
-  -- Start the gt branch checkout command in the terminal buffer
-  vim.fn.termopen("gt branch checkout", {
-    on_exit = function()
-      -- Close the window when the command exits
-      vim.api.nvim_win_close(win, false)
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end,
-  })
+  -- Set up a key mapping for the 'q' key to close the window
+  vim.api.nvim_buf_set_keymap(buf, "n", "q", ":q<CR>", { noremap = true, silent = true })
 
-  -- Enter terminal mode
-  vim.cmd("startinsert")
+  -- Set up a key mapping for the 'Enter' key to checkout the selected branch and close the window
+  vim.api.nvim_buf_set_keymap(
+    buf,
+    "n",
+    "<CR>",
+    ':lua require("kroucher.graphite").checkout_selected_branch()<CR>',
+    { noremap = true, silent = true }
+  )
+end
 
-  -- Set up an autocmd to close the new buffer and refresh the current buffer
-  vim.cmd([[
-    augroup GraphiteBranchCheckout
-      autocmd!
-      autocmd BufEnter * lua require('kroucher.graphite').handle_branch_checkout()
-    augroup END
-  ]])
+function graphite.checkout_selected_branch()
+  -- Get the current line in the buffer
+  local line = vim.api.nvim_get_current_line()
+
+  -- Extract the branch name from the line
+  local branch = line:match("[◯│◉─┘%s]+(.*)")
+
+  -- Store the "(needs restack)" string if it exists
+  local needs_restack = branch:match("%s*(%(needs restack%))")
+
+  -- Remove the "(needs restack)" string from the branch name
+  branch = branch:gsub("%s*%(needs restack%)", "")
+
+  -- Run the gt branch checkout command with the branch name
+  vim.fn.system("gt branch checkout " .. branch)
+
+  -- Print a message to the console
+  print("Checked out branch: " .. branch .. " " .. (needs_restack or ""))
+
+  -- Close the window
+  vim.api.nvim_win_close(0, true)
 end
 
 function graphite.handle_branch_checkout()

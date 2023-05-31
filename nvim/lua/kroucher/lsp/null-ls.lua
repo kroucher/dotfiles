@@ -22,6 +22,7 @@ null_ls.setup({
   sources = {
     formatting.prettierd, -- js/ts formatter
     formatting.stylua, -- lua formatter
+    null_ls.builtins.formatting.prismaFmt, -- prisma formatter
     -- diagnostics.eslint_d.with({
     --   -- js/ts linter
     --   -- only enable eslint if root has .eslintrc.js
