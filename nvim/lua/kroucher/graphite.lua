@@ -163,11 +163,19 @@ function graphite.checkout_selected_branch()
   -- Remove the "(needs restack)" string from the branch name
   branch = branch:gsub("%s*%(needs restack%)", "")
 
-  -- Run the gt branch checkout command with the branch name
-  vim.fn.system("gt branch checkout " .. branch)
+  -- Run the gt branch checkout command with the branch name and capture its output and exit code
+  local output = vim.fn.system("gt branch checkout " .. branch)
+  local exit_code = vim.v.shell_error
 
-  -- Print a message to the console
-  print("Checked out branch: " .. branch .. " " .. (needs_restack or ""))
+  -- Check the exit code
+  if exit_code == 0 then
+    -- The command succeeded, print a message to the console
+    print("Checked out branch: " .. branch .. " " .. (needs_restack or ""))
+  else
+    -- The command failed, print an error message to the console
+    print("Error checking out branch: " .. branch)
+    print("Output: " .. output)
+  end
 
   -- Close the window
   vim.api.nvim_win_close(0, true)
@@ -188,6 +196,109 @@ function graphite.handle_branch_checkout()
 
   -- Remove the autocmd
   vim.cmd("autocmd! GraphiteBranchCheckout")
+end
+
+function graphite.gt_branch_create()
+  -- Save the command line state
+  vim.fn.inputsave()
+
+  -- Open a prompt for the user to enter a new branch name
+  local branch_name = vim.fn.input("Enter new branch name: ")
+
+  -- Restore the command line state
+  vim.fn.inputrestore()
+
+  -- Check if the user entered a branch name
+  if branch_name ~= "" then
+    -- Run the gt branch create command with the entered name
+    local output = vim.fn.system("gt branch create " .. branch_name)
+    local exit_code = vim.v.shell_error
+
+    -- Check the exit code
+    if exit_code == 0 then
+      -- The command succeeded, print a message to the console
+      print("  ...Created new branch: " .. branch_name)
+    else
+      -- The command failed, print an error message to the console
+      print("  ...Error creating new branch: " .. branch_name)
+      print("Output: " .. output)
+    end
+  else
+    -- The user did not enter a branch name, print a message to the console
+    print("No branch name entered.")
+  end
+end
+
+function graphite.gt_commit_create()
+  -- Save the command line state
+  vim.fn.inputsave()
+
+  -- Open a prompt for the user to enter a commit message
+  local commit_message = vim.fn.input("Enter commit message: ")
+
+  -- Restore the command line state
+  vim.fn.inputrestore()
+
+  -- Check if the user entered a commit message
+  if commit_message ~= "" then
+    -- Wrap the commit message in quotation marks if it contains spaces
+    if commit_message:find(" ") then
+      commit_message = '"' .. commit_message .. '"'
+    end
+
+    -- Run the gt commit create command with the entered message
+    local output = vim.fn.system("gt commit create -m " .. commit_message)
+    local exit_code = vim.v.shell_error
+
+    -- Check the exit code
+    if exit_code == 0 then
+      -- The command succeeded, print a message to the console
+      print("  ...Created new commit: " .. commit_message)
+    else
+      -- The command failed, print an error message to the console
+      print("  ...Error creating new commit: " .. commit_message)
+      print("  ...Output: " .. output)
+    end
+  else
+    -- The user did not enter a commit message, print a message to the console
+    print("  ...No commit message entered.")
+  end
+end
+
+function graphite.gt_commit_amend()
+  -- Save the command line state
+  vim.fn.inputsave()
+
+  -- Open a prompt for the user to enter a new commit message
+  local commit_message = vim.fn.input("Enter new commit message: ")
+
+  -- Restore the command line state
+  vim.fn.inputrestore()
+
+  -- Check if the user entered a commit message
+  if commit_message ~= "" then
+    -- Wrap the commit message in quotation marks if it contains spaces
+    if commit_message:find(" ") then
+      commit_message = '"' .. commit_message .. '"'
+    end
+
+    -- Run the gt commit amend command with the entered message
+    local output = vim.fn.system("gt commit amend -m " .. commit_message)
+    local exit_code = vim.v.shell_error
+
+    -- Check the exit code
+    if exit_code == 0 then
+      -- The command succeeded, print a message to the console
+      print("  ...Amended commit with new message: " .. commit_message)
+    else
+      -- The command failed, print an error message to the console
+      print("  ...Error amending commit: " .. commit_message)
+      print("  ...Output: " .. output)
+    end
+  else
+    -- The user did not enter a commit message, print a message to the console
+    print("  ...No commit message entered.")
+  end
 end
 
 -- Return the plugin namespace
