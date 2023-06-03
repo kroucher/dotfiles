@@ -2,7 +2,7 @@ local Job = require("plenary.job")
 local popup = require("plenary.popup")
 
 -- Define the plugin namespace
-local graphite = {}
+local Graphite = {}
 
 -- Define a function to get the module path
 local function get_module_path()
@@ -12,7 +12,7 @@ local function get_module_path()
 end
 
 -- Define the completion function
-function _G.graphite_complete(arg_lead, cmd_line, cursor_pos)
+function _G.graphite_complete(arg_lead)
   -- Define a table of completion candidates
   local candidates = {
     "log_short",
@@ -45,28 +45,260 @@ end
 
 -- Define the Graphite command with autocompletion
 vim.cmd(
-  'command! -nargs=1 -complete=customlist,v:lua.graphite_complete Graphite lua require("'
+  'command! -nargs=* -complete=customlist,v:lua.graphite_complete Graphite lua require("'
     .. get_module_path()
-    .. '")["gt_" .. <f-args>]()'
+    .. '").graphite_command(<f-args>)'
 )
 
+-- Define a function to handle the Graphite command
+function Graphite.graphite_command(arg)
+  if arg == nil then
+    -- If no argument is passed, open the Graphite dashboard
+    Graphite.launch_dashboard()
+  else
+    -- If an argument is passed, run the corresponding Graphite command
+    local command = "gt_" .. arg
+    if Graphite[command] then
+      Graphite[command]()
+    else
+      print("Unknown command: " .. arg)
+    end
+  end
+end
+
+function Graphite.launch_dashboard()
+  -- Create a new buffer
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  -- Create a new window for the buffer
+  Graphite.dashboard_win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = vim.o.columns,
+    height = vim.o.lines,
+    row = 0,
+    col = 0,
+    border = "single",
+  })
+
+  -- Set the buffer's lines to the keybind hints
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    "Hint: [<tab>] toggle diff | [s]tage | [u]nstage | [x] discard | [c]ommit | [?] more help",
+  })
+
+  -- Set up a key mapping for the 'q' key to close the window or the tab if it's the last window
+  vim.api.nvim_buf_set_keymap(
+    buf,
+    "n",
+    "q",
+    ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>",
+    { noremap = true, silent = true }
+  )
+
+  -- Set up a key mapping for the 'l' key to open the log keybinds window
+  vim.api.nvim_buf_set_keymap(
+    buf,
+    "n",
+    "l",
+    ':lua require("kroucher.graphite").open_log_keybinds_window()<CR>',
+    { noremap = true, silent = true }
+  )
+
+  -- Define a function to open the log keybinds window
+  function Graphite.open_log_keybinds_window()
+    -- Create a new buffer
+    local log_buf = vim.api.nvim_create_buf(false, true)
+
+    -- Set the buffer's lines to the log keybinds
+    vim.api.nvim_buf_set_lines(log_buf, 0, -1, false, {
+      "Log keybinds:",
+      "[<CR>] log",
+      "[s] log short",
+      "[l] log long",
+    })
+
+    -- Create a new window for the buffer and store the window ID
+    Graphite.log_hint_win = vim.api.nvim_open_win(log_buf, true, {
+      relative = "editor",
+      width = 30,
+      height = 10,
+      col = 20,
+      row = 10,
+      border = "single",
+    })
+
+    -- Set up a key mapping for the 'q' key to close the window or the tab if it's the last window
+    vim.api.nvim_buf_set_keymap(
+      buf,
+      "n",
+      "q",
+      ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>",
+      { noremap = true, silent = true }
+    )
+
+    -- Set up key mappings for the log keybinds
+    vim.api.nvim_buf_set_keymap(
+      log_buf,
+      "n",
+      "<CR>",
+      ':lua require("kroucher.graphite").gt_log(Graphite)<CR>',
+      { noremap = true, silent = true }
+    )
+    vim.api.nvim_buf_set_keymap(
+      log_buf,
+      "n",
+      "s",
+      ':lua require("kroucher.graphite").gt_log_short(Graphite)<CR>',
+      { noremap = true, silent = true }
+    )
+    vim.api.nvim_buf_set_keymap(
+      log_buf,
+      "n",
+      "l",
+      ':lua require("kroucher.graphite").gt_log_long(Graphite)<CR>',
+      { noremap = true, silent = true }
+    )
+  end
+
+  -- Set up a key mapping for the 's' key to run the gt_status command
+  vim.api.nvim_buf_set_keymap(
+    buf,
+    "n",
+    "s",
+    ':lua require("kroucher.graphite").gt_status()<CR>',
+    { noremap = true, silent = true }
+  )
+end
+
 -- Define a function for each Graphite CLI command
-function graphite.gt_log_short()
+
+function Graphite.gt_log(graphite)
+  local job = Job:new({
+    command = "gt",
+    args = { "log" },
+    on_exit = function(j)
+      local output = j:result()
+      vim.schedule(function()
+        -- Create a new buffer
+        local buf = vim.api.nvim_create_buf(false, true)
+
+        -- Set the buffer's lines to the output of the command
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
+
+        -- Create a new window for the buffer
+        local win_id = vim.api.nvim_open_win(buf, true, {
+          relative = "editor",
+          width = 80,
+          height = 20,
+          col = 20,
+          row = 10,
+          border = "single",
+        })
+
+        -- Set the buffer's options
+        vim.api.nvim_buf_set_option(buf, "modifiable", false)
+        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+
+        -- Set up a key mapping for the 'q' key to close the window
+        vim.api.nvim_buf_set_keymap(
+          buf,
+          "n",
+          "q",
+          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win(graphite.dashboard_win)<CR>",
+          { noremap = true, silent = true }
+        )
+
+        -- Close the log hint window
+        vim.api.nvim_win_close(graphite.log_hint_win, false)
+      end)
+    end,
+  })
+
+  job:start()
+end
+
+function Graphite.gt_log_long()
+  local job = Job:new({
+    command = "gt",
+    args = { "log", "long" },
+    on_exit = function(j)
+      local output = j:result()
+      vim.schedule(function()
+        -- Create a new buffer
+        local buf = vim.api.nvim_create_buf(false, true)
+
+        -- Set the buffer's lines to the output of the command
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
+
+        -- Create a new window for the buffer
+        local win_id = vim.api.nvim_open_win(buf, true, {
+          relative = "editor",
+          width = 80,
+          height = 20,
+          col = 20,
+          row = 10,
+          border = "single",
+        })
+
+        -- Set the buffer's options
+        vim.api.nvim_buf_set_option(buf, "modifiable", false)
+        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+
+        -- Set up a key mapping for the 'q' key to close the window
+        vim.api.nvim_buf_set_keymap(
+          buf,
+          "n",
+          "q",
+          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win(graphite.dashboard_win)<CR>",
+          { noremap = true, silent = true }
+        )
+
+        -- Close the log hint window
+        vim.api.nvim_win_close(Graphite.log_hint_win, false)
+      end)
+    end,
+  })
+
+  job:start()
+end
+
+function Graphite.gt_log_short()
   local job = Job:new({
     command = "gt",
     args = { "log", "short" },
     on_exit = function(j)
       local output = j:result()
       vim.schedule(function()
-        local win_id = popup.create(output, { width = 80, height = 20, border = {} })
-        local buf_id = vim.api.nvim_win_get_buf(win_id)
+        -- Create a new buffer
+        local buf = vim.api.nvim_create_buf(false, true)
+
+        -- Set the buffer's lines to the output of the command
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
+
+        -- Create a new window for the buffer
+        local win_id = vim.api.nvim_open_win(buf, true, {
+          relative = "editor",
+          width = 80,
+          height = 20,
+          col = 20,
+          row = 10,
+          border = "single",
+        })
+
+        -- Set the buffer's options
+        vim.api.nvim_buf_set_option(buf, "modifiable", false)
+        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+
+        -- Set up a key mapping for the 'q' key to close the window
         vim.api.nvim_buf_set_keymap(
-          buf_id,
+          buf,
           "n",
           "q",
-          ":lua vim.api.nvim_win_close(0, false)<CR>",
+          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win(graphite.dashboard_win)<CR>",
           { noremap = true, silent = true }
         )
+
+        -- Close the log hint window
+        vim.api.nvim_win_close(Graphite.log_hint_win, false)
       end)
     end,
   })
@@ -74,20 +306,21 @@ function graphite.gt_log_short()
   job:start()
 end
 
-function graphite.gt_status()
+function Graphite.gt_status()
   local job = Job:new({
     command = "gt",
     args = { "status" },
-    on_exit = function(j, return_val)
+    on_exit = function(j)
       local output = j:result()
       vim.schedule(function()
         local win_id = popup.create(output, { width = 80, height = 20, border = {} })
         local buf_id = vim.api.nvim_win_get_buf(win_id)
+        -- Set up a key mapping for the 'q' key to close the window or the tab if it's the last window
         vim.api.nvim_buf_set_keymap(
           buf_id,
           "n",
           "q",
-          ":lua vim.api.nvim_win_close(0, false)<CR>",
+          ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>",
           { noremap = true, silent = true }
         )
       end)
@@ -97,7 +330,7 @@ function graphite.gt_status()
   job:start()
 end
 
-function graphite.gt_branch_checkout()
+function Graphite.gt_branch_checkout()
   -- Run the gt branch checkout command non-interactively and capture its output
   -- Run the gt log short command non-interactively and capture its output
   local output = vim.fn.systemlist("gt log short")
@@ -111,8 +344,6 @@ function graphite.gt_branch_checkout()
       table.insert(branches, line)
     end
   end
-
-  --Add instructions to the branches table
 
   -- Add instructions to the branches table
   table.insert(branches, "")
@@ -150,7 +381,7 @@ function graphite.gt_branch_checkout()
   )
 end
 
-function graphite.checkout_selected_branch()
+function Graphite.checkout_selected_branch()
   -- Get the current line in the buffer
   local line = vim.api.nvim_get_current_line()
 
@@ -181,7 +412,7 @@ function graphite.checkout_selected_branch()
   vim.api.nvim_win_close(0, true)
 end
 
-function graphite.handle_branch_checkout()
+function Graphite.handle_branch_checkout()
   -- Get the current and previous buffer numbers
   local cur_buf = vim.api.nvim_get_current_buf()
   local prev_buf = vim.fn.bufnr("#")
@@ -198,7 +429,7 @@ function graphite.handle_branch_checkout()
   vim.cmd("autocmd! GraphiteBranchCheckout")
 end
 
-function graphite.gt_branch_create()
+function Graphite.gt_branch_create()
   -- Save the command line state
   vim.fn.inputsave()
 
@@ -229,7 +460,7 @@ function graphite.gt_branch_create()
   end
 end
 
-function graphite.gt_commit_create()
+function Graphite.gt_commit_create()
   -- Save the command line state
   vim.fn.inputsave()
 
@@ -265,7 +496,7 @@ function graphite.gt_commit_create()
   end
 end
 
-function graphite.gt_commit_amend()
+function Graphite.gt_commit_amend()
   -- Save the command line state
   vim.fn.inputsave()
 
@@ -302,4 +533,4 @@ function graphite.gt_commit_amend()
 end
 
 -- Return the plugin namespace
-return graphite
+return Graphite

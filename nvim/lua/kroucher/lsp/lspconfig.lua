@@ -95,3 +95,10 @@ lspconfig.lua_ls.setup({
 
 -- configure eslint
 lspconfig.eslint.setup({})
+
+-- configure prismafmt
+lspconfig.prismals.setup({
+  prisma = {
+    prismaFmtBinPath = "",
+  },
+})
