@@ -21,7 +21,7 @@ vim.cmd([[packadd packer.nvim]])
 
 -- autocommand that reloads neovim and installs/updates/removes plugins
 -- when file is saved
-vim.cmd([[ 
+vim.cmd([[
   augroup packer_user_config
     autocmd!
     autocmd BufWritePost plugins.lua source <afile> | PackerSync
@@ -69,6 +69,17 @@ packer.startup(function(use)
   use("onsails/lspkind-nvim")
   use("jose-elias-alvarez/typescript.nvim") -- additional functionality for typescript server (e.g. rename file & update imports)
 
+  -- LSP - diagnostics line
+  use({
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    config = function()
+      require("lsp_lines").setup()
+      -- Disable virtual_text since it's redundant due to lsp_lines.
+      vim.diagnostic.config({
+        virtual_text = false,
+      })
+    end,
+  })
   -- lualine
   use("nvim-lualine/lualine.nvim")
 

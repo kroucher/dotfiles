@@ -1,9 +1,15 @@
 -- import null-ls plugin safely
-local null_ls = require("null-ls")
+local null_ls_status, null_ls = pcall(require, "null-ls")
+if not null_ls_status then
+  return
+end
+
 local pstatus, prettier = pcall(require, "prettier")
 if not pstatus then
   return
 end
+
+-- null_ls.setup();
 
 -- for conciseness
 local formatting = null_ls.builtins.formatting -- to setup formatters
@@ -11,7 +17,7 @@ local diagnostics = null_ls.builtins.diagnostics -- to setup linters
 
 -- to setup format on save
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-
+print("Setting up null-ls")
 -- configure null_ls
 null_ls.setup({
   -- setup formatters & linters
@@ -19,13 +25,7 @@ null_ls.setup({
     formatting.prettierd, -- js/ts formatter
     formatting.stylua, -- lua formatter
     formatting.prismaFmt, -- prisma formatter
-    -- diagnostics.eslint_d.with({
-    --   -- js/ts linter
-    --   -- only enable eslint if root has .eslintrc.js
-    --   condition = function(utils)
-    --     return utils.root_has_file(".eslintrc.js") -- change file extension if you use something else
-    --   end,
-    -- }),
+    diagnostics.eslint_d,
   },
   -- configure format on save
   on_attach = function(current_client, bufnr)

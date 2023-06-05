@@ -2,6 +2,9 @@ local configs = require("nvim-treesitter.configs")
 
 configs.setup({
   ensure_installed = "all",
+  auto_install = true,
+  sync_install = true,
+
   highlight = {
     enable = true,
     -- additional_vim_regex_highlighting = true,

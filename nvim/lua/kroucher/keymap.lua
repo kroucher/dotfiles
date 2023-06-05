@@ -1,5 +1,6 @@
 local builtin = require("telescope.builtin")
 local neogit = require("neogit")
+
 -- TELESCOPE
 vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
 vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
@@ -18,6 +19,9 @@ vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { noremap = true, silent
 -- CommentToggle
 vim.api.nvim_set_keymap("n", "<leader>kc", ":Commentary<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<leader>kc", ":Commentary<CR>", { noremap = true, silent = true })
+
+-- lsp-line Toggle
+vim.keymap.set("", "<leader>d", require("lsp_lines").toggle, { desc = "Toggle lsp_lines" })
 
 -- ThePrimeagen
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- move selected lines down
