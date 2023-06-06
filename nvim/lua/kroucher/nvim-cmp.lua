@@ -13,6 +13,10 @@ if not lspkind_status then
   return
 end
 
+local cmp_tailwind_status, cmp_tailwind = pcall(require, "cmp-tailwind-colors")
+if not cmp_tailwind_status then
+  return
+end
 local check_backspace = function()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
@@ -30,11 +34,16 @@ cmp.setup({
   },
   formatting = {
     format = lspkind.cmp_format({
-      mode = "symbol",
-      max_width = 50,
+      mode = "symbol_text",
+      maxwidth = 50,
       symbol_map = { Copilot = "" },
+      before = function(entry, vim_item)
+        vim_item = cmp_tailwind.format(entry, vim_item)
+        return vim_item
+      end,
     }),
   },
+
   mapping = cmp.mapping.preset.insert({
     ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
     ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion

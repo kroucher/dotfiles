@@ -13,11 +13,10 @@ end
 
 -- for conciseness
 local formatting = null_ls.builtins.formatting -- to setup formatters
-local diagnostics = null_ls.builtins.diagnostics -- to setup linters
 
 -- to setup format on save
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-print("Setting up null-ls")
+
 -- configure null_ls
 null_ls.setup({
   -- setup formatters & linters
@@ -25,7 +24,6 @@ null_ls.setup({
     formatting.prettierd, -- js/ts formatter
     formatting.stylua, -- lua formatter
     formatting.prismaFmt, -- prisma formatter
-    diagnostics.eslint_d,
   },
   -- configure format on save
   on_attach = function(current_client, bufnr)

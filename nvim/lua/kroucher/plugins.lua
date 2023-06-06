@@ -126,11 +126,14 @@ packer.startup(function(use)
 
   -- Find and replace
   use("nvim-pack/nvim-spectre")
+
   -- Highlight patterns
   use("echasnovski/mini.hipatterns")
+
   -- Shared Utils
   use("kyazdani42/nvim-web-devicons")
   use("nvim-lua/plenary.nvim")
+
   -- Telescope
   use({
     "nvim-telescope/telescope.nvim",
@@ -176,4 +179,7 @@ packer.startup(function(use)
 
   -- Multi-cursor
   use("mg979/vim-visual-multi")
+
+  --Tailwind CMP
+  use("js-everts/cmp-tailwind-colors")
 end)
