@@ -1,5 +1,4 @@
 local Job = require("plenary.job")
-local popup = require("plenary.popup")
 
 -- Define the plugin namespace
 local Graphite = {}
@@ -66,6 +65,7 @@ vim.cmd(
 )
 
 Graphite.commands = {
+  changelog = { "changelog" },
   log = { "log" },
   log_short = { "log", "short" },
   log_long = { "log", "long" },
@@ -78,6 +78,8 @@ Graphite.commands = {
   commit_create = { "commit", "create" },
   commit_amend = { "commit", "amend" },
   status = { "status" },
+  upstack_onto = { "upstack", "onto" },
+  upstack_restack = { "upstack", "restack" },
 }
 
 -- Define a function to handle the Graphite command
@@ -105,14 +107,16 @@ function Graphite:launch_dashboard()
 
   -- Set the buffer's lines to the keybind hints
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-    "Hint: [b]ranch | [l]og | [s]tatus | [q]uit",
+    "Hint: [b]ranch | [C]hangelog | [l]og | [s]tatus | [u]pstack | [e]xit",
   })
 
   -- Key mappings
-  Graphite:set_keymap(buf, "q", ":lua require('kroucher.graphite').close_dashboard_window()<CR>")
+  Graphite:set_keymap(buf, "b", ":lua require('kroucher.graphite').open_branch_keybinds_window()<CR>")
+  Graphite:set_keymap(buf, "C", ":lua require('kroucher.graphite'):gt_changelog()<CR>")
   Graphite:set_keymap(buf, "l", ":lua require('kroucher.graphite').open_log_keybinds_window()<CR>")
   Graphite:set_keymap(buf, "s", ":lua require('kroucher.graphite'):gt_status()<CR>")
-  Graphite:set_keymap(buf, "b", ":lua require('kroucher.graphite').open_branch_keybinds_window()<CR>")
+  Graphite:set_keymap(buf, "u", ":lua require('kroucher.graphite'):open_upstack_keybinds_window()<CR>")
+  Graphite:set_keymap(buf, "e", ":lua require('kroucher.graphite').close_dashboard_window()<CR>")
 end
 
 -- Define a function to close the dashboard window
@@ -139,10 +143,8 @@ function Graphite:run_command(args)
         -- Create a new buffer
         local buf = vim.api.nvim_create_buf(false, true)
 
-        -- Add blank lines and the message to the output
-        table.insert(output, "")
-        table.insert(output, "")
-        table.insert(output, "Press 'q' to close this window.")
+        table.insert(output, 1, "[q]uit")
+        table.insert(output, 2, "")
 
         -- Set the buffer's lines to the output of the command
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
@@ -158,7 +160,13 @@ function Graphite:run_command(args)
         Graphite:set_keymap(
           buf,
           "q",
-          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win("
+          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_win_close("
+            .. tostring(self.log_hint_win)
+            .. ", false); vim.api.nvim_win_close("
+            .. tostring(self.upstack_hint_win)
+            .. ", false); vim.api.nvim_win_close("
+            .. tostring(self.branch_hint_win)
+            .. ", false); vim.api.nvim_set_current_win("
             .. tostring(self.dashboard_win)
             .. ")<CR>"
         )
@@ -233,6 +241,14 @@ function Graphite:gt_branch_info()
   self:run_command(Graphite.commands.branch_info)
 end
 
+function Graphite:gt_changelog()
+  self:run_command(Graphite.commands.changelog)
+end
+
+function Graphite:gt_upstack_restack()
+  self:run_command(Graphite.commands.upstack_restack)
+end
+
 -- Define a function to open the branch keybinds window
 function Graphite:open_branch_keybinds_window()
   -- Create a new buffer
@@ -269,13 +285,164 @@ function Graphite:open_branch_keybinds_window()
   Graphite:set_keymap(branch_kb_buf, "l", ":lua require('kroucher.graphite'):gt_branch_create()<CR>")
 end
 
+function Graphite:open_upstack_keybinds_window()
+  -- Create a new buffer
+  local upstack_kb_buf = vim.api.nvim_create_buf(false, true)
+
+  -- Set the buffer's lines to the upstack keybinds
+  vim.api.nvim_buf_set_lines(upstack_kb_buf, 0, -1, false, {
+    "Upstack keybinds:",
+    "[r] restack",
+    "[o] upstack onto",
+  })
+
+  -- Create a new window for the buffer and store the window ID
+  Graphite.upstack_hint_win = Graphite:create_window(upstack_kb_buf, 30, 10, 20, 10)
+
+  -- Key mappings
+  Graphite:set_keymap(
+    upstack_kb_buf,
+    "q",
+    ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>"
+  )
+  Graphite:set_keymap(upstack_kb_buf, "o", ":lua require('kroucher.graphite'):gt_upstack_onto()<CR>")
+  Graphite:set_keymap(upstack_kb_buf, "r", ":lua require('kroucher.graphite'):gt_upstack_restack()<CR>")
+end
+
+function Graphite:gt_upstack_onto()
+  local job = Job:new({
+    command = "gt",
+    args = Graphite.commands.log_short,
+    on_exit = function(j)
+      local output = j:result()
+      vim.schedule(function()
+        -- Parse the output to extract the branch names
+        local branches = {}
+        local current_branch
+        for _, line in ipairs(output) do
+          local branch = line:match("[◯│◉─┘%s]+(.*)")
+          if branch and #branch > 0 then
+            -- Check if the branch is currently checked out
+            if line:match("◉") then
+              current_branch = branch
+            else
+              -- Add the line to the branches table
+              table.insert(branches, line)
+            end
+          end
+        end
+
+        -- Add instructions to the branches table
+        table.insert(branches, "")
+        table.insert(branches, "")
+        table.insert(
+          branches,
+          "Use the arrow keys to navigate, press Enter to select a branch, and press q to close this window."
+        )
+
+        -- Create a new buffer
+        local buf = vim.api.nvim_create_buf(false, true)
+
+        -- Set the buffer's lines to the branch names
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, branches)
+
+        -- Create a new window for the buffer
+        Graphite:create_window(buf, 80, 20, 20, 10)
+
+        -- Set the buffer's options
+        vim.api.nvim_buf_set_option(buf, "modifiable", false)
+        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+
+        -- Key mappings
+        Graphite:set_keymap(
+          buf,
+          "q",
+          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win("
+            .. tostring(self.dashboard_win)
+            .. ")<CR>"
+        )
+        Graphite:set_keymap(
+          buf,
+          "<CR>",
+          ":lua require('kroucher.graphite'):upstack_onto_selected_branch('" .. current_branch .. "')<CR>"
+        )
+      end)
+    end,
+  })
+
+  job:start()
+end
+
+function Graphite:upstack_onto_selected_branch(current_branch)
+  -- Get the current line in the buffer
+  local line = vim.api.nvim_get_current_line()
+
+  -- Extract the branch name from the line
+  local branch = line:match("[◯│◉─┘%s]+(.*)")
+
+  -- Check if the selected branch is the current branch
+  if branch == current_branch then
+    print("Cannot upstack onto the current branch.")
+    return
+  end
+
+  -- -- Run the gt upstack onto command with the branch name and capture its output and exit code
+  -- local output = vim.fn.system("gt upstack onto " .. branch)
+  local output = vim.fn.system(Graphite.commands.upstack_onto .. " " .. branch)
+  local exit_code = vim.v.shell_error
+
+  -- Check the exit code
+  if exit_code == 0 then
+    -- The command succeeded, print a message to the console
+    print("Ran upstack onto on branch: " .. branch)
+  else
+    -- The command failed, print an error message to the console
+    print("Error running upstack onto on branch: " .. branch)
+    print("Output: " .. output)
+  end
+
+  -- Close the window
+  vim.api.nvim_win_close(Graphite.upstack_hint_win, true)
+  vim.api.nvim_win_close(0, true)
+
+  -- Set the focus back to the dashboard window
+  vim.api.nvim_set_current_win(self.dashboard_win)
+
+  -- Set the buffer options for the dashboard
+  local buf = vim.api.nvim_win_get_buf(self.dashboard_win)
+  vim.api.nvim_buf_set_option(buf, "modifiable", false)
+  vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+end
+
 function Graphite:gt_branch_create()
   -- Prompt the user for the name of the new branch
   local branch_name = vim.fn.input("Enter the name of the new branch: ")
 
   -- Run the gt branch create command with the branch name
-  -- self:run_command({ "branch", "create", branch_name })
-  self:run_command({ "branch", "create", branch_name })
+  local job = Job:new({
+    command = "gt",
+    args = { "branch", "create", branch_name },
+    on_exit = function(j)
+      local output = j:result()
+      local exit_code = j.code
+      print("Exit code: " .. exit_code)
+      vim.schedule(function()
+        if exit_code == 0 then
+          -- The command succeeded, print a success message
+          print("Successfully created branch: " .. branch_name)
+        else
+          -- The command failed, print an error message
+          print("Error creating branch: " .. branch_name)
+          print("Output: " .. table.concat(output, "\n"))
+        end
+
+        -- Close the branch hint window
+        vim.api.nvim_win_close(self.branch_hint_win, false)
+      end)
+    end,
+  })
+
+  job:start()
 end
 
 function Graphite:gt_branch_checkout()
