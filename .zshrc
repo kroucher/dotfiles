@@ -1,4 +1,4 @@
-export PATH=$HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -116,3 +116,5 @@ autoload -Uz compinit
 compinit
 
 fpath+=${ZDOTDIR:-~}/.zsh_functions
+
+export prisma="/Users/danieldeveney/Library/pnpm/prisma"

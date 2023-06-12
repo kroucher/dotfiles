@@ -1,16 +1,3 @@
--- auto install packer if not installed
-local ensure_packer = function()
-  local fn = vim.fn
-  local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-  if fn.empty(fn.glob(install_path)) > 0 then
-    fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
-    vim.cmd([[packadd packer.nvim]])
-    return true
-  end
-  return false
-end
-local packer_bootstrap = ensure_packer() -- true if packer was just installed
-
 local status, packer = pcall(require, "packer")
 if not status then
   print("Packer is not installed")
@@ -69,17 +56,6 @@ packer.startup(function(use)
   use("onsails/lspkind-nvim")
   use("jose-elias-alvarez/typescript.nvim") -- additional functionality for typescript server (e.g. rename file & update imports)
 
-  -- LSP - diagnostics line
-  use({
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-    config = function()
-      require("lsp_lines").setup()
-      -- Disable virtual_text since it's redundant due to lsp_lines.
-      vim.diagnostic.config({
-        virtual_text = false,
-      })
-    end,
-  })
   -- lualine
   use("nvim-lualine/lualine.nvim")
 
@@ -113,9 +89,6 @@ packer.startup(function(use)
     end,
   })
 
-  -- Multiple Cursors
-  use("terryma/vim-multiple-cursors")
-
   -- Tmux integration
   use({
     "aserowy/tmux.nvim",
@@ -123,9 +96,6 @@ packer.startup(function(use)
       return require("tmux").setup()
     end,
   })
-
-  -- Find and replace
-  use("nvim-pack/nvim-spectre")
 
   -- Highlight patterns
   use("echasnovski/mini.hipatterns")

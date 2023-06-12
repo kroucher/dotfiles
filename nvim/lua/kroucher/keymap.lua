@@ -20,9 +20,6 @@ vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { noremap = true, silent
 vim.api.nvim_set_keymap("n", "<leader>kc", ":Commentary<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "<leader>kc", ":Commentary<CR>", { noremap = true, silent = true })
 
--- lsp-line Toggle
-vim.keymap.set("", "<leader>d", require("lsp_lines").toggle, { desc = "Toggle lsp_lines" })
-
 -- ThePrimeagen
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- move selected lines down
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv") -- move selected lines up
