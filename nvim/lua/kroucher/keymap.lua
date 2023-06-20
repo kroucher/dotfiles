@@ -1,8 +1,11 @@
-local builtin = require("telescope.builtin")
-local neogit = require("neogit")
+local builtin = require "telescope.builtin"
+
+local neogit_status, neogit = pcall(require, "neogit")
+if not neogit_status then return end
 
 -- TELESCOPE
 vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+vim.keymap.set("n", "<leader>re", builtin.oldfiles, {})
 vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
 vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
@@ -25,7 +28,7 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- move selected lines down
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv") -- move selected lines up
 vim.keymap.set("n", "n", "nzzzv") -- find next, center and unfold
 vim.keymap.set("n", "N", "Nzzzv") -- find prev, center and unfold
-vim.keymap.set("x", "<leader>p", [["_dP]]) -- paste over visual selection
+vim.keymap.set("x", "p", [["_dP]]) -- paste over visual selection
 
 -- NEOGIT
 vim.keymap.set("n", "<leader>gs", neogit.open, {})

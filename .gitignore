@@ -7,9 +7,11 @@ configstore
 gh
 gtk-2.0
 iterm2
+htop
 nvim.bak*
 planetscale
 thefuck
 zed
 .DS_Store
 raycast
+/nvim/env.lua

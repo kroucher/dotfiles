@@ -1,10 +1,8 @@
 local copilot_status, copilot = pcall(require, "copilot")
-if not copilot_status then
-  return
-end
+if not copilot_status then return end
 vim.keymap.set("i", "<Tab>", function()
-  if copilot.suggestion.is_visible() then
-    copilot.suggestion.accept()
+  if require("copilot.suggestion").is_visible() then
+    require("copilot.suggestion").accept()
   else
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
   end

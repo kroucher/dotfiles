@@ -1,4 +1,4 @@
-local Job = require("plenary.job")
+local Job = require "plenary.job"
 
 -- Define the plugin namespace
 local Graphite = {}
@@ -49,9 +49,7 @@ function _G:graphite_complete(arg_lead)
   -- Filter the candidates based on the argument lead
   local matches = {}
   for _, candidate in ipairs(candidates) do
-    if string.match(candidate, "^" .. arg_lead) then
-      table.insert(matches, candidate)
-    end
+    if string.match(candidate, "^" .. arg_lead) then table.insert(matches, candidate) end
   end
 
   return matches
@@ -80,6 +78,7 @@ Graphite.commands = {
   status = { "status" },
   upstack_onto = { "upstack", "onto" },
   upstack_restack = { "upstack", "restack" },
+  downstack_get = { "downstack", "get" },
 }
 
 -- Define a function to handle the Graphite command
@@ -107,7 +106,7 @@ function Graphite:launch_dashboard()
 
   -- Set the buffer's lines to the keybind hints
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-    "Hint: [b]ranch | [C]hangelog | [l]og | [s]tatus | [u]pstack | [e]xit",
+    "Hint: [b]ranch | [C]hangelog | [d]ownstack | [l]og | [s]tatus | [u]pstack | [e]xit",
   })
 
   -- Key mappings
@@ -117,18 +116,19 @@ function Graphite:launch_dashboard()
   Graphite:set_keymap(buf, "s", ":lua require('kroucher.graphite'):gt_status()<CR>")
   Graphite:set_keymap(buf, "u", ":lua require('kroucher.graphite'):open_upstack_keybinds_window()<CR>")
   Graphite:set_keymap(buf, "e", ":lua require('kroucher.graphite').close_dashboard_window()<CR>")
+  Graphite:set_keymap(buf, "d", ":lua require('kroucher.graphite').open_downstack_keybinds_window()<CR>")
 end
 
 -- Define a function to close the dashboard window
 function Graphite.close_dashboard_window()
   -- Check if the current window is the last window
-  local is_last_window = vim.fn.tabpagenr("$") == 1 and vim.fn.winnr("$") == 1
+  local is_last_window = vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1
 
   -- Close the window if it's not the last window, otherwise close the tab
   if not is_last_window then
     vim.api.nvim_win_close(0, false)
   else
-    vim.cmd("tabclose")
+    vim.cmd "tabclose"
   end
 end
 
@@ -320,10 +320,10 @@ function Graphite:gt_upstack_onto()
         local branches = {}
         local current_branch
         for _, line in ipairs(output) do
-          local branch = line:match("[◯│◉─┘%s]+(.*)")
+          local branch = line:match "[◯│◉─┘%s]+(.*)"
           if branch and #branch > 0 then
             -- Check if the branch is currently checked out
-            if line:match("◉") then
+            if line:match "◉" then
               current_branch = branch
             else
               -- Add the line to the branches table
@@ -373,16 +373,40 @@ function Graphite:gt_upstack_onto()
   job:start()
 end
 
+function Graphite:open_downstack_keybinds_window()
+  -- Create a new buffer
+  local downstack_kb_buf = vim.api.nvim_create_buf(false, true)
+
+  -- Set the buffer's lines to the downstack keybinds
+  vim.api.nvim_buf_set_lines(downstack_kb_buf, 0, -1, false, {
+    "Downstack keybinds:",
+    "[g] downstack get",
+    -- Add more downstack commands here
+  })
+
+  -- Create a new window for the buffer and store the window ID
+  Graphite.downstack_hint_win = Graphite:create_window(downstack_kb_buf, 30, 10, 20, 10)
+
+  -- Key mappings
+  Graphite:set_keymap(
+    downstack_kb_buf,
+    "q",
+    ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>"
+  )
+  Graphite:set_keymap(downstack_kb_buf, "g", ":lua require('kroucher.graphite'):gt_downstack_get()<CR>")
+  -- Add key mappings for more downstack commands here
+end
+
 function Graphite:upstack_onto_selected_branch(current_branch)
   -- Get the current line in the buffer
   local line = vim.api.nvim_get_current_line()
 
   -- Extract the branch name from the line
-  local branch = line:match("[◯│◉─┘%s]+(.*)")
+  local branch = line:match "[◯│◉─┘%s]+(.*)"
 
   -- Check if the selected branch is the current branch
   if branch == current_branch then
-    print("Cannot upstack onto the current branch.")
+    print "Cannot upstack onto the current branch."
     return
   end
 
@@ -416,7 +440,7 @@ end
 
 function Graphite:gt_branch_create()
   -- Prompt the user for the name of the new branch
-  local branch_name = vim.fn.input("Enter the name of the new branch: ")
+  local branch_name = vim.fn.input "Enter the name of the new branch: "
 
   -- Run the gt branch create command with the branch name
   local job = Job:new({
@@ -455,7 +479,7 @@ function Graphite:gt_branch_checkout()
         -- Parse the output to extract the branch names
         local branches = {}
         for _, line in ipairs(output) do
-          local branch = line:match("[◯│◉─┘%s]+(.*)")
+          local branch = line:match "[◯│◉─┘%s]+(.*)"
           if branch and #branch > 0 then
             -- Add the line to the branches table
             table.insert(branches, line)
@@ -504,10 +528,10 @@ function Graphite:checkout_selected_branch()
   local line = vim.api.nvim_get_current_line()
 
   -- Extract the branch name from the line
-  local branch = line:match("[◯│◉─┘%s]+(.*)")
+  local branch = line:match "[◯│◉─┘%s]+(.*)"
 
   -- Store the "(needs restack)" string if it exists
-  local needs_restack = branch:match("%s*(%(needs restack%))")
+  local needs_restack = branch:match "%s*(%(needs restack%))"
 
   -- Remove the "(needs restack)" string from the branch name
   branch = branch:gsub("%s*%(needs restack%)", "")

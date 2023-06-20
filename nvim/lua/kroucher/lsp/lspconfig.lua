@@ -1,20 +1,41 @@
 local lspconfig_status, lspconfig = pcall(require, "lspconfig")
 if not lspconfig_status then
-  print("lspconfig is not installed")
+  print "lspconfig is not installed"
   return
 end
 
 local cmp_nvim_lsp_status, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if not cmp_nvim_lsp_status then
-  print("cmp_nvim_lsp is not installed")
+  print "cmp_nvim_lsp is not installed"
   return
 end
 
-local typescript_setup, typescript = pcall(require, "typescript")
-if not typescript_setup then
-  print("typescript is not installed")
-  return
+local protocol = require "vim.lsp.protocol"
+
+local augroup_format = vim.api.nvim_create_augroup("Format", { clear = true })
+local enable_format_on_save = function(_, bufnr)
+  vim.api.nvim_clear_autocmds({ group = augroup_format, buffer = bufnr })
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    group = augroup_format,
+    buffer = bufnr,
+    callback = function()
+      vim.lsp.buf.format({ bufnr = bufnr })
+    end,
+  })
 end
+
+vim.api.nvim_create_autocmd("BufRead", {
+  callback = function()
+    vim.filetype.add({
+      filename = {
+        [".env"] = "sh",
+        [".envrc"] = "sh",
+        ["*.env"] = "sh",
+        ["*.envrc"] = "sh",
+      },
+    })
+  end,
+})
 
 local keymap = vim.keymap
 
@@ -46,14 +67,16 @@ local on_attach = function(client, bufnr)
 end
 
 -- used to enable autocompletion (assign to every lsp server config)
-local capabilities = cmp_nvim_lsp.default_capabilities()
+local capabilities = vim.lsp.protocol.make_client_capabilities()
 
--- Change the Diagnostic symbols in the sign column (gutter)
-local signs = { Error = " ", Warn = " ", Hint = "ﴞ ", Info = " " }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+-- Enable snippets-completion (for nvim_cmp)
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- Enable folding (for nvim-ufo)
+capabilities.textDocument.foldingRange = {
+  dynamicRegistration = false,
+  lineFoldingOnly = true,
+}
 
 -- configure html server
 lspconfig["html"].setup({
@@ -61,11 +84,17 @@ lspconfig["html"].setup({
   on_attach = on_attach,
 })
 
--- configure typescript server with plugin
-typescript.setup({
+require("typescript").setup({
+  disable_commands = false, -- prevent the plugin from creating Vim commands
+  debug = false, -- enable debug logging for commands
+  go_to_source_definition = {
+    fallback = true, -- fall back to standard LSP definition on failure
+  },
   server = {
-    capabilities = capabilities,
     on_attach = on_attach,
+    filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+    cmd = { "typescript-language-server", "--stdio" },
+    capabilities = capabilities,
   },
 })
 
@@ -81,35 +110,104 @@ lspconfig["tailwindcss"].setup({
   on_attach = on_attach,
 })
 
+local runtime_path = vim.split(package.path, ";")
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
 -- configure lua server (with special settings)
 lspconfig.lua_ls.setup({
-  commands = {
-    Format = {
-      function()
-        require("stylua-nvim").format_file()
-      end,
-    },
-  },
   capabilities = capabilities,
-  on_attach = on_attach,
+  on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+    enable_format_on_save(client, bufnr)
+  end,
   settings = {
     Lua = {
       diagnostics = {
         -- Get the language server to recognize the `vim` global
         globals = { "vim" },
       },
+      runtime = {
+        version = "LuaJIT",
+        path = runtime_path,
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+        checkThirdParty = false,
+      },
     },
   },
 })
 
--- configure eslint
 lspconfig.eslint.setup({})
 
 -- configure prismafmt
 lspconfig.prismals.setup({
   capabilities = capabilities,
-  on_attach = on_attach,
+  on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+    enable_format_on_save(client, bufnr)
+  end,
   prisma = {
     prismaFmtBinPath = "",
   },
 })
+
+protocol.CompletionItemKind = {
+  "", -- Text
+  "", -- Method
+  "", -- Function
+  "", -- Constructor
+  "", -- Field
+  "", -- Variable
+  "", -- Class
+  "ﰮ", -- Interface
+  "", -- Module
+  "", -- Property
+  "", -- Unit
+  "", -- Value
+  "", -- Enum
+  "", -- Keyword
+  "﬌", -- Snippet
+  "", -- Color
+  "", -- File
+  "", -- Reference
+  "", -- Folder
+  "", -- EnumMember
+  "", -- Constant
+  "", -- Struct
+  "", -- Event
+  "ﬦ", -- Operator
+  "", -- TypeParameter
+}
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+  underline = true,
+  update_in_insert = false,
+  virtual_text = { spacing = 4, prefix = "●" },
+  severity_sort = true,
+})
+
+-- Diagnostic symbols in the sign column (gutter)
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = "●",
+  },
+  update_in_insert = true,
+  float = {
+    source = "always", -- Or "if_many"
+  },
+})
+
+vim.o.updatetime = 250
+vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
+vim.o.statuscolumn =
+  '%=%l%s%{foldlevel(v:lnum) > foldlevel(v:lnum - 1) ? (foldclosed(v:lnum) == -1 ? "▼" : "⏵") : " " }'
