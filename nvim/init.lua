@@ -6,7 +6,6 @@ local autocmd = vim.api.nvim_create_autocmd
 
 require "kroucher.plugins"
 require "kroucher.dashboard"
-require "kroucher.bufferline"
 require "kroucher.treesitter"
 require "kroucher.nvim-tree-config"
 require "kroucher.keymap"
@@ -29,7 +28,6 @@ require "kroucher.graphite"
 
 vim.wo.number = true
 vim.wo.relativenumber = true
-vim.opt.foldcolumn = "1"
 vim.opt.foldcolumn = "1"
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
@@ -55,8 +53,8 @@ function Sad(line_nr, from, to, fname)
 end
 
 function IncreasePadding()
-  Sad("50", 0, 20, "~/.config/alacritty/alacritty.yml")
-  Sad("51", 0, 20, "~/.config/alacritty/alacritty.yml")
+  Sad("50", 0, 40, "~/.config/alacritty/alacritty.yml")
+  Sad("51", 0, 40, "~/.config/alacritty/alacritty.yml")
 end
 
 function DecreasePadding()

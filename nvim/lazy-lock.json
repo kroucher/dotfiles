@@ -3,7 +3,7 @@
   "Comment.nvim": { "branch": "master", "commit": "176e85eeb63f1a5970d6b88f1725039d85ca0055" },
   "LuaSnip": { "branch": "master", "commit": "3d2ad0c0fa25e4e272ade48a62a185ebd0fe26c1" },
   "alpha-nvim": { "branch": "main", "commit": "9e33db324b8bb7a147bce9ea5496686ee859461d" },
-  "bufferline.nvim": { "branch": "main", "commit": "41660189da6951d14436147dff30ed7f0d12ed01" },
+  "barbar.nvim": { "branch": "master", "commit": "b8ca6076f75e49cca1fa0288c080f3d10ec2152c" },
   "cmp-buffer": { "branch": "main", "commit": "3022dbc9166796b644a841a02de8dd1cc1d311fa" },
   "cmp-nvim-lsp": { "branch": "main", "commit": "0e6b2ed705ddcff9738ec4ea838141654f12eeef" },
   "cmp-path": { "branch": "main", "commit": "91ff86cd9c29299a64f968ebb45846c485725f23" },
@@ -49,7 +49,7 @@
   "telescope.nvim": { "branch": "master", "commit": "00cf15074a2997487813672a75f946d2ead95eb0" },
   "tmux.nvim": { "branch": "main", "commit": "03e28fdaa2ef54b975ba1930f1e69b5e231dedc9" },
   "tokyonight.nvim": { "branch": "main", "commit": "18259404c962736c70c0f670b71c976c4a5ac2bb" },
-  "typescript.nvim": { "branch": "main", "commit": "5b3680e5c386e8778c081173ea0c978c14a40ccb" },
+  "typescript-tools.nvim": { "branch": "master", "commit": "1a1fc8fcc498ade3adf8b251e930abb2eb5b7983" },
   "vim-moonfly-colors": { "branch": "master", "commit": "77c9a89d4f9474fb415d142e8385634717157737" },
   "vim-visual-multi": { "branch": "master", "commit": "724bd53adfbaf32e129b001658b45d4c5c29ca1a" },
   "vim-wakatime": { "branch": "master", "commit": "018fa9a80c27ccf2a8967b9e27890372e5c2fb4f" }

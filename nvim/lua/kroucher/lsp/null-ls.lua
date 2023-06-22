@@ -1,13 +1,9 @@
 -- import null-ls plugin safely
 local null_ls_status, null_ls = pcall(require, "null-ls")
-if not null_ls_status then
-  return
-end
+if not null_ls_status then return end
 
 local pstatus, prettier = pcall(require, "prettier")
-if not pstatus then
-  return
-end
+if not pstatus then return end
 
 -- for conciseness
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -27,15 +23,10 @@ null_ls.setup({
   sources = {
     null_ls.builtins.formatting.prettierd, -- js/ts formatter
     null_ls.builtins.formatting.prismaFmt, -- prisma formatter
-
-    -- Lua
     null_ls.builtins.formatting.stylua,
-
-    --typescript
-    require("typescript.extensions.null-ls.code-actions"),
   },
   on_attach = function(client, bufnr)
-    if client.supports_method("textDocument/formatting") then
+    if client.supports_method "textDocument/formatting" then
       vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
       vim.api.nvim_create_autocmd("BufWritePre", {
         group = augroup,
@@ -82,7 +73,3 @@ prettier.setup({
     vue_indent_script_and_style = false,
   },
 })
-
-vim.api.nvim_create_user_command("DisableLspFormatting", function()
-  vim.api.nvim_clear_autocmds({ group = augroup, buffer = 0 })
-end, { nargs = 0 })
