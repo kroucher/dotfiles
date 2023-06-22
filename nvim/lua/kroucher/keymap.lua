@@ -11,10 +11,9 @@ vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
 
 -- navigate buffers
-vim.keymap.set("n", "<S-l>", ":BufferNext<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<S-h>", ":BufferPrevious<CR>", { noremap = true, silent = true })
--- close buffer
-vim.keymap.set("n", "<leader>q", ":BufferWipeout<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-l>", ":bnext<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-h>", ":bprevious<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>q", ":bdelete<CR>", { noremap = true, silent = true })
 
 -- NVIMTREE
 vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
