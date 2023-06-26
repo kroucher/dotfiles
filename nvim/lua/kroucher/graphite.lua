@@ -1,4 +1,7 @@
+local Input = require "nui.input"
 local Job = require "plenary.job"
+local Popup = require "nui.popup"
+local event = require("nui.utils.autocmd").event
 
 -- Define the plugin namespace
 local Graphite = {}
@@ -10,19 +13,86 @@ local function get_module_path()
   return module_path
 end
 
-function Graphite:create_window(buf, width, height, col, row)
-  return vim.api.nvim_open_win(buf, true, {
-    relative = "editor",
-    width = width,
-    height = height,
-    col = col,
-    row = row,
-    border = "single",
+function Graphite:create_input(title, on_submit)
+  local input = Input({
+    border = {
+      style = "rounded",
+      text = {
+        top = title,
+        top_align = "center",
+      },
+    },
+    position = "20%",
+    size = {
+      width = 40,
+      height = 2,
+    },
+  }, {
+    prompt = "> ",
+    default_value = "",
+    on_submit = on_submit,
+    on_close = function()
+      print "Input closed"
+    end,
   })
+
+  return input
 end
 
-function Graphite:set_keymap(buf, key, command)
-  vim.api.nvim_buf_set_keymap(buf, "n", key, command, { noremap = true, silent = true })
+function Graphite:create_window(title, hint)
+  local popup = Popup({
+    zindex = 10,
+    border = {
+      padding = { 1, 1, 1, 1 }, -- optional
+      style = "rounded",
+      text = { top = title, top_align = "center", bottom = hint, bottom_align = "center" },
+    },
+    relative = "editor",
+    position = "50%",
+    size = {
+      width = "70%",
+      height = "70%",
+    },
+    enter = true,
+    focusable = true,
+    buf_options = {
+      modifiable = true,
+      readonly = false,
+    },
+  })
+
+  popup:mount()
+
+  return popup
+end
+
+function Graphite:create_keybinds_window(title)
+  local popup = Popup({
+    border = {
+      padding = { 1, 1, 1, 1 }, -- optional
+      style = "rounded",
+      text = { top = title, top_align = "center" },
+    },
+    relative = "editor",
+    position = {
+      row = "80%",
+      col = "0%",
+    },
+    size = {
+      width = "30%",
+      height = "20%",
+    },
+    enter = true,
+    focusable = true,
+    buf_options = {
+      modifiable = true,
+      readonly = false,
+    },
+  })
+
+  popup:mount()
+
+  return popup
 end
 
 -- Define the completion function
@@ -98,25 +168,24 @@ function Graphite:graphite_command(arg)
 end
 
 function Graphite:launch_dashboard()
-  -- Create a new buffer
-  local buf = vim.api.nvim_create_buf(false, true)
-
   -- Create a new window for the buffer
-  Graphite.dashboard_win = Graphite:create_window(buf, vim.o.columns, vim.o.lines, 0, 0)
+  local dashboard = Graphite:create_window "Graphite Dashboard"
 
   -- Set the buffer's lines to the keybind hints
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-    "Hint: [b]ranch | [C]hangelog | [d]ownstack | [l]og | [s]tatus | [u]pstack | [e]xit",
+  vim.api.nvim_buf_set_lines(dashboard.bufnr, 0, -1, false, {
+    "Hint: [b]ranch | [C]hangelog | [d]ownstack | [l]og | [s]tatus | [u]pstack | [q]uit",
   })
 
   -- Key mappings
-  Graphite:set_keymap(buf, "b", ":lua require('kroucher.graphite').open_branch_keybinds_window()<CR>")
-  Graphite:set_keymap(buf, "C", ":lua require('kroucher.graphite'):gt_changelog()<CR>")
-  Graphite:set_keymap(buf, "l", ":lua require('kroucher.graphite').open_log_keybinds_window()<CR>")
-  Graphite:set_keymap(buf, "s", ":lua require('kroucher.graphite'):gt_status()<CR>")
-  Graphite:set_keymap(buf, "u", ":lua require('kroucher.graphite'):open_upstack_keybinds_window()<CR>")
-  Graphite:set_keymap(buf, "e", ":lua require('kroucher.graphite').close_dashboard_window()<CR>")
-  Graphite:set_keymap(buf, "d", ":lua require('kroucher.graphite').open_downstack_keybinds_window()<CR>")
+  dashboard:map("n", "b", ":lua require('kroucher.graphite').open_branch_keybinds_window()<CR>")
+  dashboard:map("n", "C", ":lua require('kroucher.graphite'):gt_changelog()<CR>")
+  dashboard:map("n", "l", ":lua require('kroucher.graphite').open_log_keybinds_window()<CR>")
+  dashboard:map("n", "s", ":lua require('kroucher.graphite'):gt_status()<CR>")
+  dashboard:map("n", "u", ":lua require('kroucher.graphite'):open_upstack_keybinds_window()<CR>")
+  dashboard:map("n", "q", function()
+    Graphite:close_dashboard_window()
+  end)
+  dashboard:map("n", "d", ":lua require('kroucher.graphite').open_downstack_keybinds_window()<CR>")
 end
 
 -- Define a function to close the dashboard window
@@ -140,36 +209,24 @@ function Graphite:run_command(args)
     on_exit = function(j)
       local output = j:result()
       vim.schedule(function()
-        -- Create a new buffer
-        local buf = vim.api.nvim_create_buf(false, true)
-
-        table.insert(output, 1, "[q]uit")
-        table.insert(output, 2, "")
+        -- Create a new window for the buffer
+        local command = Graphite:create_window("gt_" .. table.concat(args, "_"), "[q] Return to Dashboard")
 
         -- Set the buffer's lines to the output of the command
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
-
-        -- Create a new window for the buffer
-        Graphite:create_window(buf, 120, 20, 20, 10)
+        vim.api.nvim_buf_set_lines(command.bufnr, 0, -1, false, output)
 
         -- Set the buffer's options
-        vim.api.nvim_buf_set_option(buf, "modifiable", false)
-        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+        vim.api.nvim_buf_set_option(command.bufnr, "modifiable", false)
+        vim.api.nvim_buf_set_option(command.bufnr, "bufhidden", "hide")
 
         -- Key mappings
-        Graphite:set_keymap(
-          buf,
-          "q",
-          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_win_close("
-            .. tostring(self.log_hint_win)
-            .. ", false); vim.api.nvim_win_close("
-            .. tostring(self.upstack_hint_win)
-            .. ", false); vim.api.nvim_win_close("
-            .. tostring(self.branch_hint_win)
-            .. ", false); vim.api.nvim_set_current_win("
-            .. tostring(self.dashboard_win)
-            .. ")<CR>"
-        )
+        command:map("n", "q", function()
+          if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
+            vim.cmd "quit"
+          else
+            command:unmount()
+          end
+        end)
       end)
     end,
   })
@@ -179,29 +236,40 @@ end
 
 -- Define a function to open the log keybinds window
 function Graphite:open_log_keybinds_window()
-  -- Create a new buffer
-  local log_kb_buf = vim.api.nvim_create_buf(false, true)
+  -- Create a new window for the buffer and store the window ID
+  local log_window = Graphite:create_keybinds_window "gt log keybinds"
 
   -- Set the buffer's lines to the log keybinds
-  vim.api.nvim_buf_set_lines(log_kb_buf, 0, -1, false, {
+  vim.api.nvim_buf_set_lines(log_window.bufnr, 0, -1, false, {
     "Log keybinds:",
     "[<CR>] log",
     "[s] log short",
     "[l] log long",
   })
 
-  -- Create a new window for the buffer and store the window ID
-  Graphite.log_hint_win = Graphite:create_window(log_kb_buf, 30, 10, 20, 10)
-
   -- Key mappings
-  Graphite:set_keymap(
-    log_kb_buf,
-    "q",
-    ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>"
-  )
-  Graphite:set_keymap(log_kb_buf, "<CR>", ":lua require('kroucher.graphite'):gt_log()<CR>")
-  Graphite:set_keymap(log_kb_buf, "s", ":lua require('kroucher.graphite'):gt_log_short()<CR>")
-  Graphite:set_keymap(log_kb_buf, "l", ":lua require('kroucher.graphite'):gt_log_long()<CR>")
+  log_window:map("n", "q", function()
+    if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
+      vim.cmd "quit"
+    else
+      log_window:unmount()
+    end
+  end, { noremap = true, silent = true })
+
+  log_window:map("n", "<CR>", function()
+    Graphite:gt_log()
+    log_window:unmount()
+  end, { noremap = true, silent = true })
+
+  log_window:map("n", "s", function()
+    Graphite:gt_log_short()
+    log_window:unmount()
+  end, { noremap = true, silent = true })
+
+  log_window:map("n", "l", function()
+    Graphite:gt_log_long()
+    log_window:unmount()
+  end, { noremap = true, silent = true })
 end
 
 -- Define a function for each Graphite CLI command
@@ -251,11 +319,11 @@ end
 
 -- Define a function to open the branch keybinds window
 function Graphite:open_branch_keybinds_window()
-  -- Create a new buffer
-  local branch_kb_buf = vim.api.nvim_create_buf(false, true)
+  -- Create a new window for the buffer and store the window ID
+  local branch_window = Graphite:create_keybinds_window "gt branch"
 
   -- Set the buffer's lines to the branch keybinds
-  vim.api.nvim_buf_set_lines(branch_kb_buf, 0, -1, false, {
+  vim.api.nvim_buf_set_lines(branch_window.bufnr, 0, -1, false, {
     "Branch keybinds:",
     "[<CR>] branch checkout",
     "[c] branch create",
@@ -265,48 +333,71 @@ function Graphite:open_branch_keybinds_window()
     "[d] branch down",
     "[u] branch up",
   })
-
-  -- Create a new window for the buffer and store the window ID
-  Graphite.branch_hint_win = Graphite:create_window(branch_kb_buf, 30, 10, 20, 10)
-
   -- Key mappings
-  Graphite:set_keymap(
-    branch_kb_buf,
-    "q",
-    ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>"
-  )
-  Graphite:set_keymap(branch_kb_buf, "<CR>", ":lua require('kroucher.graphite'):gt_branch_checkout()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "c", ":lua require('kroucher.graphite'):gt_branch_create()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "b", ":lua require('kroucher.graphite'):gt_branch_bottom()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "t", ":lua require('kroucher.graphite'):gt_branch_top()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "d", ":lua require('kroucher.graphite'):gt_branch_down()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "u", ":lua require('kroucher.graphite'):gt_branch_up()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "i", ":lua require('kroucher.graphite'):gt_branch_info()<CR>")
-  Graphite:set_keymap(branch_kb_buf, "l", ":lua require('kroucher.graphite'):gt_branch_create()<CR>")
+  branch_window:map("n", "q", function()
+    if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
+      vim.cmd "quit"
+    else
+      vim.api.nvim_win_close(0, false)
+    end
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "<CR>", function()
+    require("kroucher.graphite"):gt_branch_checkout()
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "c", function()
+    require("kroucher.graphite"):gt_branch_create()
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "b", function()
+    require("kroucher.graphite"):gt_branch_bottom()
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "t", function()
+    require("kroucher.graphite"):gt_branch_top()
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "d", function()
+    require("kroucher.graphite"):gt_branch_down()
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "u", function()
+    require("kroucher.graphite"):gt_branch_up()
+  end, { noremap = true, silent = true })
+
+  branch_window:map("n", "i", function()
+    require("kroucher.graphite"):gt_branch_info()
+  end, { noremap = true, silent = true })
 end
 
 function Graphite:open_upstack_keybinds_window()
-  -- Create a new buffer
-  local upstack_kb_buf = vim.api.nvim_create_buf(false, true)
+  -- Create a new window for the buffer and store the window ID
+  local upstack_window = Graphite:create_keybinds_window "gt upstack"
 
   -- Set the buffer's lines to the upstack keybinds
-  vim.api.nvim_buf_set_lines(upstack_kb_buf, 0, -1, false, {
+  vim.api.nvim_buf_set_lines(upstack_window.bufnr, 0, -1, false, {
     "Upstack keybinds:",
     "[r] restack",
     "[o] upstack onto",
   })
 
-  -- Create a new window for the buffer and store the window ID
-  Graphite.upstack_hint_win = Graphite:create_window(upstack_kb_buf, 30, 10, 20, 10)
-
   -- Key mappings
-  Graphite:set_keymap(
-    upstack_kb_buf,
-    "q",
-    ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>"
-  )
-  Graphite:set_keymap(upstack_kb_buf, "o", ":lua require('kroucher.graphite'):gt_upstack_onto()<CR>")
-  Graphite:set_keymap(upstack_kb_buf, "r", ":lua require('kroucher.graphite'):gt_upstack_restack()<CR>")
+  upstack_window:map("n", "q", function()
+    if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
+      vim.cmd "quit"
+    else
+      upstack_window:unmount()
+    end
+  end, { noremap = true, silent = true })
+
+  upstack_window:map("n", "o", function()
+    require("kroucher.graphite"):gt_upstack_onto()
+  end, { noremap = true, silent = true })
+
+  upstack_window:map("n", "r", function()
+    require("kroucher.graphite"):gt_upstack_restack()
+  end, { noremap = true, silent = true })
 end
 
 function Graphite:gt_upstack_onto()
@@ -332,37 +423,25 @@ function Graphite:gt_upstack_onto()
           end
         end
 
-        -- Add instructions to the branches table
-        table.insert(branches, "")
-        table.insert(branches, "")
-        table.insert(
-          branches,
+        -- Create a new buffer
+        local buf = Graphite:create_window(
+          "upstack onto",
           "Use the arrow keys to navigate, press Enter to select a branch, and press q to close this window."
         )
 
-        -- Create a new buffer
-        local buf = vim.api.nvim_create_buf(false, true)
-
         -- Set the buffer's lines to the branch names
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, branches)
-
-        -- Create a new window for the buffer
-        Graphite:create_window(buf, 80, 20, 20, 10)
-
-        -- Set the buffer's options
-        vim.api.nvim_buf_set_option(buf, "modifiable", false)
-        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+        vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, branches)
 
         -- Key mappings
-        Graphite:set_keymap(
-          buf,
+        buf:map(
+          "n",
           "q",
           ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win("
             .. tostring(self.dashboard_win)
             .. ")<CR>"
         )
-        Graphite:set_keymap(
-          buf,
+        buf:map(
+          "n",
           "<CR>",
           ":lua require('kroucher.graphite'):upstack_onto_selected_branch('" .. current_branch .. "')<CR>"
         )
@@ -375,25 +454,22 @@ end
 
 function Graphite:open_downstack_keybinds_window()
   -- Create a new buffer
-  local downstack_kb_buf = vim.api.nvim_create_buf(false, true)
+  local downstack_kb_buf = Graphite:create_keybinds_window "gt downstack"
 
   -- Set the buffer's lines to the downstack keybinds
-  vim.api.nvim_buf_set_lines(downstack_kb_buf, 0, -1, false, {
+  vim.api.nvim_buf_set_lines(downstack_kb_buf.bufnr, 0, -1, false, {
     "Downstack keybinds:",
     "[g] downstack get",
     -- Add more downstack commands here
   })
 
-  -- Create a new window for the buffer and store the window ID
-  Graphite.downstack_hint_win = Graphite:create_window(downstack_kb_buf, 30, 10, 20, 10)
-
   -- Key mappings
-  Graphite:set_keymap(
-    downstack_kb_buf,
+  downstack_kb_buf:map(
+    "n",
     "q",
     ":lua if vim.fn.tabpagenr('$') == 1 and vim.fn.winnr('$') == 1 then vim.cmd('quit') else vim.api.nvim_win_close(0, false) end<CR>"
   )
-  Graphite:set_keymap(downstack_kb_buf, "g", ":lua require('kroucher.graphite'):gt_downstack_get()<CR>")
+  downstack_kb_buf:map("n", "g", ":lua require('kroucher.graphite'):gt_downstack_get()<CR>")
   -- Add key mappings for more downstack commands here
 end
 
@@ -438,25 +514,23 @@ function Graphite:upstack_onto_selected_branch(current_branch)
   vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
 end
 
-function Graphite:gt_branch_create()
-  -- Prompt the user for the name of the new branch
-  local branch_name = vim.fn.input "Enter the name of the new branch: "
+function Graphite:handle_branch_create(input)
+  local value = input.text
 
   -- Run the gt branch create command with the branch name
   local job = Job:new({
     command = "gt",
-    args = { "branch", "create", branch_name },
+    args = { "branch", "create", value },
     on_exit = function(j)
       local output = j:result()
       local exit_code = j.code
-      print("Exit code: " .. exit_code)
       vim.schedule(function()
         if exit_code == 0 then
           -- The command succeeded, print a success message
-          print("Successfully created branch: " .. branch_name)
+          print("Successfully created branch: " .. value)
         else
           -- The command failed, print an error message
-          print("Error creating branch: " .. branch_name)
+          print("Error creating branch: " .. value)
           print("Output: " .. table.concat(output, "\n"))
         end
 
@@ -467,6 +541,14 @@ function Graphite:gt_branch_create()
   })
 
   job:start()
+end
+
+function Graphite:gt_branch_create()
+  -- Create an Input instance for branch creation
+  local input = Graphite:create_input("[Create Branch]", Graphite.handle_branch_create)
+
+  -- Mount the input window
+  input:mount()
 end
 
 function Graphite:gt_branch_checkout()
@@ -501,7 +583,7 @@ function Graphite:gt_branch_checkout()
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, branches)
 
         -- Create a new window for the buffer
-        Graphite:create_window(buf, 80, 20, 20, 10)
+        Graphite:create_window "gt branch checkout"
 
         -- Set the buffer's options
         vim.api.nvim_buf_set_option(buf, "modifiable", false)

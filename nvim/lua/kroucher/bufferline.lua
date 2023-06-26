@@ -3,7 +3,6 @@ if not status_ok then return end
 
 bufferline.setup({
   options = {
-    style_preset = { bufferline.style_preset.minimal },
     mode = "buffers",
     numbers = "none",
     themable = true,
@@ -11,7 +10,6 @@ bufferline.setup({
     right_mouse_command = "bdelete! %d",
     left_mouse_command = "buffer %d",
     middle_mouse_command = nil,
-    buffer_close_icon = "",
     modified_icon = "",
     close_icon = "",
     left_trunc_marker = "",
@@ -21,6 +19,7 @@ bufferline.setup({
     tab_size = 21,
     diagnostics = "nvim_lsp",
     diagnostics_update_in_insert = true,
+    hover = { enabled = true, reveal = { "close" } },
     offsets = {
       {
         filetype = "NvimTree",
@@ -60,6 +59,26 @@ bufferline.setup({
     },
     fill = {
       bg = "#252b37",
+    },
+    diagnostic_visible = {
+      bg = "red",
+    },
+    diagnostic_selected = {
+      bg = "red",
+    },
+    error_diagnostic_visible = {
+      bg = "red",
+      fg = "red",
+    },
+    error_diagnostic_selected = {
+      bg = "red",
+      fg = "red",
+    },
+    error_selected = {
+      bg = "#1a1b22",
+    },
+    modified_selected = {
+      bg = "#1a1b22",
     },
   },
 })
