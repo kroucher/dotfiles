@@ -22,7 +22,8 @@ function Graphite:create_input(title, on_submit)
         top_align = "center",
       },
     },
-    position = "20%",
+    relative = "editor",
+    position = "50%",
     size = {
       width = 40,
       height = 2,
@@ -183,22 +184,9 @@ function Graphite:launch_dashboard()
   dashboard:map("n", "s", ":lua require('kroucher.graphite'):gt_status()<CR>")
   dashboard:map("n", "u", ":lua require('kroucher.graphite'):open_upstack_keybinds_window()<CR>")
   dashboard:map("n", "q", function()
-    Graphite:close_dashboard_window()
+    dashboard:unmount()
   end)
   dashboard:map("n", "d", ":lua require('kroucher.graphite').open_downstack_keybinds_window()<CR>")
-end
-
--- Define a function to close the dashboard window
-function Graphite.close_dashboard_window()
-  -- Check if the current window is the last window
-  local is_last_window = vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1
-
-  -- Close the window if it's not the last window, otherwise close the tab
-  if not is_last_window then
-    vim.api.nvim_win_close(0, false)
-  else
-    vim.cmd "tabclose"
-  end
 end
 
 -- Define a function to run a Graphite command
@@ -343,31 +331,38 @@ function Graphite:open_branch_keybinds_window()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "<CR>", function()
-    require("kroucher.graphite"):gt_branch_checkout()
+    branch_window:unmount()
+    Graphite:gt_branch_checkout()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "c", function()
-    require("kroucher.graphite"):gt_branch_create()
+    branch_window:unmount()
+    Graphite:gt_branch_create()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "b", function()
-    require("kroucher.graphite"):gt_branch_bottom()
+    branch_window:unmount()
+    Graphite:gt_branch_bottom()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "t", function()
-    require("kroucher.graphite"):gt_branch_top()
+    branch_window:unmount()
+    Graphite:gt_branch_top()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "d", function()
-    require("kroucher.graphite"):gt_branch_down()
+    branch_window:unmount()
+    Graphite:gt_branch_down()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "u", function()
-    require("kroucher.graphite"):gt_branch_up()
+    branch_window:unmount()
+    Graphite:gt_branch_up()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "i", function()
-    require("kroucher.graphite"):gt_branch_info()
+    branch_window:unmount()
+    Graphite:gt_branch_info()
   end, { noremap = true, silent = true })
 end
 
@@ -515,27 +510,24 @@ function Graphite:upstack_onto_selected_branch(current_branch)
 end
 
 function Graphite:handle_branch_create(input)
-  local value = input.text
+  print(vim.inspect(input)) -- Add this line to print the input object
 
   -- Run the gt branch create command with the branch name
   local job = Job:new({
     command = "gt",
-    args = { "branch", "create", value },
+    args = { "branch", "create", input },
     on_exit = function(j)
       local output = j:result()
       local exit_code = j.code
       vim.schedule(function()
         if exit_code == 0 then
           -- The command succeeded, print a success message
-          print("Successfully created branch: " .. value)
+          print("Successfully created branch: " .. input)
         else
           -- The command failed, print an error message
-          print("Error creating branch: " .. value)
+          print("Error creating branch: " .. input)
           print("Output: " .. table.concat(output, "\n"))
         end
-
-        -- Close the branch hint window
-        vim.api.nvim_win_close(self.branch_hint_win, false)
       end)
     end,
   })
@@ -544,10 +536,10 @@ function Graphite:handle_branch_create(input)
 end
 
 function Graphite:gt_branch_create()
-  -- Create an Input instance for branch creation
-  local input = Graphite:create_input("[Create Branch]", Graphite.handle_branch_create)
+  local input = self:create_input("Create Branch", function(value)
+    self:handle_branch_create(value)
+  end)
 
-  -- Mount the input window
   input:mount()
 end
 
