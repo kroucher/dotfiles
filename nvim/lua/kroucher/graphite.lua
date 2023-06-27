@@ -1,7 +1,6 @@
 local Input = require "nui.input"
 local Job = require "plenary.job"
 local Popup = require "nui.popup"
-local event = require("nui.utils.autocmd").event
 
 -- Define the plugin namespace
 local Graphite = {}
@@ -22,7 +21,8 @@ function Graphite:create_input(title, on_submit)
         top_align = "center",
       },
     },
-    position = "20%",
+    relative = "editor",
+    position = "50%",
     size = {
       width = 40,
       height = 2,
@@ -31,9 +31,6 @@ function Graphite:create_input(title, on_submit)
     prompt = "> ",
     default_value = "",
     on_submit = on_submit,
-    on_close = function()
-      print "Input closed"
-    end,
   })
 
   return input
@@ -169,12 +166,51 @@ end
 
 function Graphite:launch_dashboard()
   -- Create a new window for the buffer
-  local dashboard = Graphite:create_window "Graphite Dashboard"
+  local dashboard = Graphite:create_window(
+    "Graphite Dashboard",
+    "Hint: [b]ranch | [C]hangelog | [d]ownstack | [l]og | [s]tatus | [u]pstack | [q]uit"
+  )
 
-  -- Set the buffer's lines to the keybind hints
-  vim.api.nvim_buf_set_lines(dashboard.bufnr, 0, -1, false, {
-    "Hint: [b]ranch | [C]hangelog | [d]ownstack | [l]og | [s]tatus | [u]pstack | [q]uit",
+  -- Get the currently checked out branch
+  local current_branch_job = Job:new({
+    command = "git",
+    args = { "rev-parse", "--abbrev-ref", "HEAD" },
+    on_exit = function(j)
+      local output = j:result()
+      vim.schedule(function()
+        -- Set the buffer's lines to the keybind hints
+        vim.api.nvim_buf_set_lines(dashboard.bufnr, 0, -1, false, {
+          "Currently checked out branch: " .. output[1],
+        })
+      end)
+    end,
   })
+
+  current_branch_job:start()
+
+  -- Get the recently checked out branches
+  local recent_branches_job = Job:new({
+    command = "git",
+    args = { "for-each-ref", "--sort=-committerdate", "--format=%(refname:short)", "refs/heads/" },
+    on_exit = function(j)
+      local output = j:result()
+      vim.schedule(function()
+        -- Parse the output to extract the branch names
+        local branches = {}
+        for _, branch in ipairs(output) do
+          if branch then table.insert(branches, branch) end
+        end
+
+        -- Add the recently checked out branches to the buffer's lines
+        vim.api.nvim_buf_set_lines(dashboard.bufnr, -1, -1, false, {
+          "Recently checked out branches:",
+        })
+        vim.api.nvim_buf_set_lines(dashboard.bufnr, -1, -1, false, branches)
+      end)
+    end,
+  })
+
+  recent_branches_job:start()
 
   -- Key mappings
   dashboard:map("n", "b", ":lua require('kroucher.graphite').open_branch_keybinds_window()<CR>")
@@ -335,18 +371,17 @@ function Graphite:open_branch_keybinds_window()
   })
   -- Key mappings
   branch_window:map("n", "q", function()
-    if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
-      vim.cmd "quit"
-    else
-      vim.api.nvim_win_close(0, false)
-    end
+    branch_window:unmount()
+    vim.api.nvim_set_current_win(self.dashboard_win)
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "<CR>", function()
+    branch_window:unmount()
     require("kroucher.graphite"):gt_branch_checkout()
   end, { noremap = true, silent = true })
 
   branch_window:map("n", "c", function()
+    branch_window:unmount()
     require("kroucher.graphite"):gt_branch_create()
   end, { noremap = true, silent = true })
 
@@ -515,27 +550,22 @@ function Graphite:upstack_onto_selected_branch(current_branch)
 end
 
 function Graphite:handle_branch_create(input)
-  local value = input.text
-
   -- Run the gt branch create command with the branch name
   local job = Job:new({
     command = "gt",
-    args = { "branch", "create", value },
+    args = { "branch", "create", input },
     on_exit = function(j)
       local output = j:result()
       local exit_code = j.code
       vim.schedule(function()
         if exit_code == 0 then
           -- The command succeeded, print a success message
-          print("Successfully created branch: " .. value)
+          print("Successfully created branch: " .. input)
         else
           -- The command failed, print an error message
-          print("Error creating branch: " .. value)
+          print("Error creating branch: " .. input)
           print("Output: " .. table.concat(output, "\n"))
         end
-
-        -- Close the branch hint window
-        vim.api.nvim_win_close(self.branch_hint_win, false)
       end)
     end,
   })
@@ -544,10 +574,10 @@ function Graphite:handle_branch_create(input)
 end
 
 function Graphite:gt_branch_create()
-  -- Create an Input instance for branch creation
-  local input = Graphite:create_input("[Create Branch]", Graphite.handle_branch_create)
+  local input = self:create_input("Create Branch", function(value)
+    self:handle_branch_create(value)
+  end)
 
-  -- Mount the input window
   input:mount()
 end
 
@@ -577,27 +607,21 @@ function Graphite:gt_branch_checkout()
         )
 
         -- Create a new buffer
-        local buf = vim.api.nvim_create_buf(false, true)
+        local branch_checkout_buf = Graphite:create_window "gt branch checkout"
 
         -- Set the buffer's lines to the branch names
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, branches)
-
-        -- Create a new window for the buffer
-        Graphite:create_window "gt branch checkout"
+        vim.api.nvim_buf_set_lines(branch_checkout_buf.bufnr, 0, -1, false, branches)
 
         -- Set the buffer's options
-        vim.api.nvim_buf_set_option(buf, "modifiable", false)
-        vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
+        vim.api.nvim_buf_set_option(branch_checkout_buf.bufnr, "modifiable", false)
+        vim.api.nvim_buf_set_option(branch_checkout_buf.bufnr, "bufhidden", "hide")
 
         -- Key mappings
-        Graphite:set_keymap(
-          buf,
-          "q",
-          ":lua vim.api.nvim_win_close(0, false); vim.api.nvim_set_current_win("
-            .. tostring(self.dashboard_win)
-            .. ")<CR>"
-        )
-        Graphite:set_keymap(buf, "<CR>", ":lua require('kroucher.graphite'):checkout_selected_branch()<CR>")
+        branch_checkout_buf:map("n", "q", function()
+          branch_checkout_buf:unmount()
+          vim.api.nvim_set_current_win(self.dashboard_win)
+        end)
+        branch_checkout_buf:map("n", "<CR>", ":lua require('kroucher.graphite'):checkout_selected_branch()<CR>")
       end)
     end,
   })

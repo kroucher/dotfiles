@@ -175,7 +175,7 @@ local plugins = {
   "wakatime/vim-wakatime",
 
   -- prettier
-  "MunifTanjim/prettier.nvim",
+  "prettier/vim-prettier",
 
   -- lua formatting
   "ckipp01/stylua-nvim",

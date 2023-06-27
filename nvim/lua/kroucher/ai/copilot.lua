@@ -16,3 +16,12 @@ vim.keymap.set("i", "<S-Tab>", function()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<S-Tab>", true, false, true), "n", false)
   end
 end, { desc = "Super Shift Tab" })
+
+-- Next and previous suggestion
+vim.keymap.set("i", "<M-Tab>", function()
+  if require("copilot.suggestion").is_visible() then
+    require("copilot.suggestion").next()
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-Tab>", true, false, true), "n", false)
+  end
+end, { desc = "Super n" })

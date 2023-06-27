@@ -15,5 +15,6 @@ saga.setup({
     colors = {
       normal_bg = "#022746",
     },
+    border= "rounded"
   },
 })
