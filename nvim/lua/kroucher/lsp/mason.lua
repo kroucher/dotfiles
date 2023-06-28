@@ -21,6 +21,10 @@ if not lspconfig_status then
   print("lspconfig is not installed")
   return
 end
+local lsp_defaults = lspconfig.util.default_config
+
+lsp_defaults.capabilities =
+  vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 mason.setup()
 mason_lspconfig.setup({
@@ -41,13 +45,11 @@ mason_lspconfig.setup_handlers({
   function(server_name)
     require("lspconfig")[server_name].setup({
       on_attach = require("kroucher.lsp.shared").on_attach,
-      capabilities = require("kroucher.lsp.shared").capabilities,
     })
   end,
   ["lua_ls"] = function(server_name)
     require("lspconfig")[server_name].setup({
       on_attach = require("kroucher.lsp.shared").on_attach,
-      capabilities = require("kroucher.lsp.shared").capabilities,
       settings = {
         Lua = {
           diagnostics = {
@@ -66,7 +68,6 @@ mason_lspconfig.setup_handlers({
   ["tailwindcss"] = function(server_name)
     require("lspconfig")[server_name].setup({
       on_attach = require("kroucher.lsp.shared").on_attach,
-      capabilities = require("kroucher.lsp.shared").capabilities,
       settings = {
         tailwindCSS = {
           experimental = {

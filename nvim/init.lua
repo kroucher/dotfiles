@@ -3,8 +3,9 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 local autocmd = vim.api.nvim_create_autocmd
-
+vim.g.mapleader = "\\"
 require("kroucher.plugins")
+require("kroucher.lsp")
 require("kroucher.bufferline")
 require("kroucher.dashboard")
 require("kroucher.treesitter")
@@ -19,7 +20,6 @@ require("kroucher.ai.copilot")
 require("kroucher.ai.chatgpt")
 require("kroucher.telescope")
 require("kroucher.nvim-cmp")
-require("kroucher.lsp")
 require("kroucher.neoscroll")
 require("kroucher.hipatterns")
 require("kroucher.graphite")

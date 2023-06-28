@@ -76,6 +76,10 @@ local plugins = {
   "hrsh7th/nvim-cmp",
   "hrsh7th/cmp-buffer",
   "hrsh7th/cmp-path",
+  "hrsh7th/cmp-nvim-lua",
+  "andersevenrud/cmp-tmux",
+  "David-Kunz/cmp-npm",
+  "petertriho/cmp-git",
 
   -- snippets
   {
@@ -217,6 +221,13 @@ local plugins = {
   },
 }
 
-local opts = {}
+local opts = {
+  ui = {
+    border = "rounded",
+  },
+  install = {
+    colorscheme = { "poimandres" },
+  },
+}
 
 require("lazy").setup(plugins, opts)
