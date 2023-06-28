@@ -1,4 +1,3 @@
-vim.opt.termguicolors = true
 -- setup colorizer
 require("colorizer").setup()
 

@@ -83,24 +83,6 @@ M.setup = function()
     severity_sort = true,
   })
 
-  vim.o.updatetime = 250
-  vim.cmd([[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]])
-
-  vim.o.statuscolumn =
-    '%=%l%s%{foldlevel(v:lnum) > foldlevel(v:lnum - 1) ? (foldclosed(v:lnum) == -1 ? "▼" : "⏵") : " " }'
-
-  vim.api.nvim_create_autocmd("BufRead", {
-    callback = function()
-      vim.filetype.add({
-        filename = {
-          [".env"] = "sh",
-          [".envrc"] = "sh",
-          ["*.env"] = "sh",
-          ["*.envrc"] = "sh",
-        },
-      })
-    end,
-  })
 end
 
 local function lsp_keymaps(bufnr)
