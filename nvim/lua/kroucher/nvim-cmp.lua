@@ -22,10 +22,13 @@ local check_backspace = function()
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
 end
 
+lspkind.init()
+
 -- load friendly snippets
 require("luasnip.loaders.from_vscode").lazy_load()
 
 vim.opt.completeopt = "menu,menuone,noselect"
+print("setting up cmp")
 cmp.setup({
   snippet = {
     expand = function(args) luasnip.lsp_expand(args.body) end,
@@ -49,7 +52,7 @@ cmp.setup({
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-Space>"] = cmp.mapping.complete(), -- show suggestions
     ["<C-e>"] = cmp.mapping.abort(), -- close completion window
-    ["<CR>"] = cmp.mapping.confirm({ select = false }),
+    ["<CR>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
     ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()

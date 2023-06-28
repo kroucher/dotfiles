@@ -1,6 +1,6 @@
-local Input = require "nui.input"
-local Job = require "plenary.job"
-local Popup = require "nui.popup"
+local Input = require("nui.input")
+local Job = require("plenary.job")
+local Popup = require("nui.popup")
 
 -- Define the plugin namespace
 local Graphite = {}
@@ -116,7 +116,9 @@ function _G:graphite_complete(arg_lead)
   -- Filter the candidates based on the argument lead
   local matches = {}
   for _, candidate in ipairs(candidates) do
-    if string.match(candidate, "^" .. arg_lead) then table.insert(matches, candidate) end
+    if string.match(candidate, "^" .. arg_lead) then
+      table.insert(matches, candidate)
+    end
   end
 
   return matches
@@ -198,7 +200,9 @@ function Graphite:launch_dashboard()
         -- Parse the output to extract the branch names
         local branches = {}
         for _, branch in ipairs(output) do
-          if branch then table.insert(branches, branch) end
+          if branch then
+            table.insert(branches, branch)
+          end
         end
 
         -- Add the recently checked out branches to the buffer's lines
@@ -227,13 +231,13 @@ end
 -- Define a function to close the dashboard window
 function Graphite.close_dashboard_window()
   -- Check if the current window is the last window
-  local is_last_window = vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1
+  local is_last_window = vim.fn.tabpagenr("$") == 1 and vim.fn.winnr("$") == 1
 
   -- Close the window if it's not the last window, otherwise close the tab
   if not is_last_window then
     vim.api.nvim_win_close(0, false)
   else
-    vim.cmd "tabclose"
+    vim.cmd("tabclose")
   end
 end
 
@@ -257,8 +261,8 @@ function Graphite:run_command(args)
 
         -- Key mappings
         command:map("n", "q", function()
-          if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
-            vim.cmd "quit"
+          if vim.fn.tabpagenr("$") == 1 and vim.fn.winnr("$") == 1 then
+            vim.cmd("quit")
           else
             command:unmount()
           end
@@ -273,7 +277,7 @@ end
 -- Define a function to open the log keybinds window
 function Graphite:open_log_keybinds_window()
   -- Create a new window for the buffer and store the window ID
-  local log_window = Graphite:create_keybinds_window "gt log keybinds"
+  local log_window = Graphite:create_keybinds_window("gt log keybinds")
 
   -- Set the buffer's lines to the log keybinds
   vim.api.nvim_buf_set_lines(log_window.bufnr, 0, -1, false, {
@@ -285,8 +289,8 @@ function Graphite:open_log_keybinds_window()
 
   -- Key mappings
   log_window:map("n", "q", function()
-    if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
-      vim.cmd "quit"
+    if vim.fn.tabpagenr("$") == 1 and vim.fn.winnr("$") == 1 then
+      vim.cmd("quit")
     else
       log_window:unmount()
     end
@@ -356,7 +360,7 @@ end
 -- Define a function to open the branch keybinds window
 function Graphite:open_branch_keybinds_window()
   -- Create a new window for the buffer and store the window ID
-  local branch_window = Graphite:create_keybinds_window "gt branch"
+  local branch_window = Graphite:create_keybinds_window("gt branch")
 
   -- Set the buffer's lines to the branch keybinds
   vim.api.nvim_buf_set_lines(branch_window.bufnr, 0, -1, false, {
@@ -408,7 +412,7 @@ end
 
 function Graphite:open_upstack_keybinds_window()
   -- Create a new window for the buffer and store the window ID
-  local upstack_window = Graphite:create_keybinds_window "gt upstack"
+  local upstack_window = Graphite:create_keybinds_window("gt upstack")
 
   -- Set the buffer's lines to the upstack keybinds
   vim.api.nvim_buf_set_lines(upstack_window.bufnr, 0, -1, false, {
@@ -419,8 +423,8 @@ function Graphite:open_upstack_keybinds_window()
 
   -- Key mappings
   upstack_window:map("n", "q", function()
-    if vim.fn.tabpagenr "$" == 1 and vim.fn.winnr "$" == 1 then
-      vim.cmd "quit"
+    if vim.fn.tabpagenr("$") == 1 and vim.fn.winnr("$") == 1 then
+      vim.cmd("quit")
     else
       upstack_window:unmount()
     end
@@ -446,10 +450,10 @@ function Graphite:gt_upstack_onto()
         local branches = {}
         local current_branch
         for _, line in ipairs(output) do
-          local branch = line:match "[◯│◉─┘%s]+(.*)"
+          local branch = line:match("[◯│◉─┘%s]+(.*)")
           if branch and #branch > 0 then
             -- Check if the branch is currently checked out
-            if line:match "◉" then
+            if line:match("◉") then
               current_branch = branch
             else
               -- Add the line to the branches table
@@ -489,7 +493,7 @@ end
 
 function Graphite:open_downstack_keybinds_window()
   -- Create a new buffer
-  local downstack_kb_buf = Graphite:create_keybinds_window "gt downstack"
+  local downstack_kb_buf = Graphite:create_keybinds_window("gt downstack")
 
   -- Set the buffer's lines to the downstack keybinds
   vim.api.nvim_buf_set_lines(downstack_kb_buf.bufnr, 0, -1, false, {
@@ -513,11 +517,11 @@ function Graphite:upstack_onto_selected_branch(current_branch)
   local line = vim.api.nvim_get_current_line()
 
   -- Extract the branch name from the line
-  local branch = line:match "[◯│◉─┘%s]+(.*)"
+  local branch = line:match("[◯│◉─┘%s]+(.*)")
 
   -- Check if the selected branch is the current branch
   if branch == current_branch then
-    print "Cannot upstack onto the current branch."
+    print("Cannot upstack onto the current branch.")
     return
   end
 
@@ -591,7 +595,7 @@ function Graphite:gt_branch_checkout()
         -- Parse the output to extract the branch names
         local branches = {}
         for _, line in ipairs(output) do
-          local branch = line:match "[◯│◉─┘%s]+(.*)"
+          local branch = line:match("[◯│◉─┘%s]+(.*)")
           if branch and #branch > 0 then
             -- Add the line to the branches table
             table.insert(branches, line)
@@ -607,7 +611,7 @@ function Graphite:gt_branch_checkout()
         )
 
         -- Create a new buffer
-        local branch_checkout_buf = Graphite:create_window "gt branch checkout"
+        local branch_checkout_buf = Graphite:create_window("gt branch checkout")
 
         -- Set the buffer's lines to the branch names
         vim.api.nvim_buf_set_lines(branch_checkout_buf.bufnr, 0, -1, false, branches)
@@ -634,10 +638,10 @@ function Graphite:checkout_selected_branch()
   local line = vim.api.nvim_get_current_line()
 
   -- Extract the branch name from the line
-  local branch = line:match "[◯│◉─┘%s]+(.*)"
+  local branch = line:match("[◯│◉─┘%s]+(.*)")
 
   -- Store the "(needs restack)" string if it exists
-  local needs_restack = branch:match "%s*(%(needs restack%))"
+  local needs_restack = branch:match("%s*(%(needs restack%))")
 
   -- Remove the "(needs restack)" string from the branch name
   branch = branch:gsub("%s*%(needs restack%)", "")

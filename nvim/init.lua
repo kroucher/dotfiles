@@ -4,25 +4,25 @@ vim.g.loaded_netrwPlugin = 1
 
 local autocmd = vim.api.nvim_create_autocmd
 
-require "kroucher.plugins"
-require "kroucher.bufferline"
-require "kroucher.dashboard"
-require "kroucher.treesitter"
-require "kroucher.nvim-tree-config"
-require "kroucher.keymap"
-require "kroucher.lualine"
-require "kroucher.comment"
-require "kroucher.gitsigns"
-require "kroucher.autopairs"
-require "kroucher.colors"
-require "kroucher.ai.copilot"
-require "kroucher.ai.chatgpt"
-require "kroucher.telescope"
-require "kroucher.nvim-cmp"
-require "kroucher.lsp"
-require "kroucher.neoscroll"
-require "kroucher.hipatterns"
-require "kroucher.graphite"
+require("kroucher.plugins")
+require("kroucher.bufferline")
+require("kroucher.dashboard")
+require("kroucher.treesitter")
+require("kroucher.nvim-tree-config")
+require("kroucher.keymap")
+require("kroucher.lualine")
+require("kroucher.comment")
+require("kroucher.gitsigns")
+require("kroucher.autopairs")
+require("kroucher.colors")
+require("kroucher.ai.copilot")
+require("kroucher.ai.chatgpt")
+require("kroucher.telescope")
+require("kroucher.nvim-cmp")
+require("kroucher.lsp")
+require("kroucher.neoscroll")
+require("kroucher.hipatterns")
+require("kroucher.graphite")
 
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -30,7 +30,7 @@ vim.opt.foldcolumn = "1"
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
 vim.opt.foldenable = true
-vim.opt.tabstop = 2
+vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
@@ -63,7 +63,9 @@ vim.opt.termguicolors = true
 
 local function open_nvim_tree(data)
   local directory = vim.fn.isdirectory(data.file) == 1
-  if not directory then return end
+  if not directory then
+    return
+  end
   -- change to the directory
   vim.cmd.cd(data.file)
   -- open the tree
@@ -89,10 +91,10 @@ function DecreasePadding()
   Sad("51", 20, 0, "~/.config/alacritty/alacritty.yml")
 end
 
-vim.cmd [[
+vim.cmd([[
   augroup ChangeAlacrittyPadding
    au!
    au VimEnter * lua DecreasePadding()
    au VimLeavePre * lua IncreasePadding()
   augroup END
-]]
+]])

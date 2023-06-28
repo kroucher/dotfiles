@@ -16,7 +16,9 @@ local function foldTextFormatter(virtText, lnum, endLnum, width, truncate)
       local hlGroup = chunk[2]
       table.insert(newVirtText, { chunkText, hlGroup })
       chunkWidth = vim.fn.strdisplaywidth(chunkText)
-      if curWidth + chunkWidth < targetWidth then suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth) end
+      if curWidth + chunkWidth < targetWidth then
+        suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+      end
       break
     end
     curWidth = curWidth + chunkWidth
@@ -25,7 +27,7 @@ local function foldTextFormatter(virtText, lnum, endLnum, width, truncate)
   return newVirtText
 end
 
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -46,6 +48,20 @@ local plugins = {
     config = function()
       require("alpha").setup(require("alpha.themes.dashboard").config)
     end,
+  },
+
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end,
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
   },
 
   {
@@ -123,20 +139,10 @@ local plugins = {
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
-    config = function()
-      require("copilot").setup({
-        auto_refresh = true,
-        suggestion = { enabled = true, auto_trigger = true },
-        panel = { enabled = false },
-      })
-    end,
   },
   -- Add Copilot to CMP
   {
     "zbirenbaum/copilot-cmp",
-    config = function()
-      require("copilot_cmp").setup()
-    end,
   },
 
   -- Tmux integration

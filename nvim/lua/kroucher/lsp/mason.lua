@@ -1,24 +1,24 @@
 local mason_status, mason = pcall(require, "mason")
 if not mason_status then
-  print "Mason not found"
+  print("Mason not found")
   return
 end
 
 local mason_lspconfig_status, mason_lspconfig = pcall(require, "mason-lspconfig")
 if not mason_lspconfig_status then
-  print "Mason lspconfig not found"
+  print("Mason lspconfig not found")
   return
 end
 
 local mason_null_ls_status, mason_null_ls = pcall(require, "mason-null-ls")
 if not mason_null_ls_status then
-  print "Mason null-ls not found"
+  print("Mason null-ls not found")
   return
 end
 
-local lspconfig_status, _ = pcall(require, "lspconfig")
+local lspconfig_status, lspconfig = pcall(require, "lspconfig")
 if not lspconfig_status then
-  print "lspconfig is not installed"
+  print("lspconfig is not installed")
   return
 end
 
@@ -39,7 +39,6 @@ mason_lspconfig.setup({
 
 mason_lspconfig.setup_handlers({
   function(server_name)
-    if server_name == "tsserver" then return true end
     require("lspconfig")[server_name].setup({
       on_attach = require("kroucher.lsp.shared").on_attach,
       capabilities = require("kroucher.lsp.shared").capabilities,
@@ -56,8 +55,8 @@ mason_lspconfig.setup_handlers({
           },
           workspace = {
             library = {
-              [vim.fn.expand "$VIMRUNTIME/lua"] = true,
-              [vim.fn.stdpath "config" .. "/lua"] = true,
+              [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+              [vim.fn.stdpath("config") .. "/lua"] = true,
             },
           },
         },

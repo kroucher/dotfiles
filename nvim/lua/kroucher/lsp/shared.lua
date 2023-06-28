@@ -1,7 +1,13 @@
+local status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+if not status_ok then
+  print("Failed to load cmp_nvim_lsp")
+  return
+end
+
 local M = {}
 
 M.setup = function()
-  local protocol = require "vim.lsp.protocol"
+  local protocol = require("vim.lsp.protocol")
   local signs = {
     { name = "DiagnosticSignError", text = "" },
     { name = "DiagnosticSignWarn", text = "" },
@@ -78,7 +84,7 @@ M.setup = function()
   })
 
   vim.o.updatetime = 250
-  vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+  vim.cmd([[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]])
 
   vim.o.statuscolumn =
     '%=%l%s%{foldlevel(v:lnum) > foldlevel(v:lnum - 1) ? (foldclosed(v:lnum) == -1 ? "▼" : "⏵") : " " }'
@@ -97,7 +103,7 @@ M.setup = function()
   })
 end
 
-local function lsp_keymaps(client, bufnr)
+local function lsp_keymaps(bufnr)
   local opts = { noremap = true, silent = true }
 
   vim.api.nvim_buf_set_keymap(bufnr, "n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
@@ -128,24 +134,12 @@ local function lsp_keymaps(client, bufnr)
 end
 
 M.on_attach = function(client, bufnr)
-  if client.name == "jsonls" then client.server_capabilities.documentFormattingProvider = false end
-  lsp_keymaps(client, bufnr)
+  if client.name == "jsonls" then
+    client.server_capabilities.documentFormattingProvider = false
+  end
+  lsp_keymaps(bufnr)
 end
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-
--- Enable snippets-completion (for nvim_cmp)
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
--- Enable folding (for nvim-ufo)
-capabilities.textDocument.foldingRange = {
-  dynamicRegistration = false,
-  lineFoldingOnly = true,
-}
-
-local status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-if not status_ok then return end
-
-M.capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
+M.capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 return M

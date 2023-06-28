@@ -1,6 +1,13 @@
 local copilot_status, copilot = pcall(require, "copilot")
 if not copilot_status then return end
 
+copilot.setup({
+  suggestion = { enabled = false },
+  panel = { enabled = false },
+})
+
+require("copilot_cmp").setup()
+
 vim.keymap.set("i", "<Tab>", function()
   if require("copilot.suggestion").is_visible() then
     require("copilot.suggestion").accept()
