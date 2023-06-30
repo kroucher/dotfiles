@@ -41,13 +41,13 @@ M.setup = function()
 
   vim.diagnostic.config(config)
 
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = "rounded",
-  })
-
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-    border = "rounded",
-  })
+  -- Give me rounded borders everywhere
+  local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = "rounded"
+    return orig_util_open_floating_preview(contents, syntax, opts, ...)
+  end
 
   protocol.CompletionItemKind = {
     "", -- Text
@@ -82,8 +82,9 @@ M.setup = function()
     virtual_text = { spacing = 4, prefix = "●" },
     severity_sort = true,
   })
-
 end
+
+local function format_on_save(client, bufnr) end
 
 local function lsp_keymaps(bufnr)
   local opts = { noremap = true, silent = true }
@@ -101,25 +102,15 @@ local function lsp_keymaps(bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
   vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
   vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>o", "<cmd>Lspsaga outline<CR>", opts) -- see outline on right hand side
-
-  local augroup_format = vim.api.nvim_create_augroup("Format", { clear = true })
-  vim.api.nvim_clear_autocmds({ group = augroup_format, buffer = bufnr })
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    group = augroup_format,
-    buffer = bufnr,
-    callback = function()
-      vim.lsp.buf.format({
-        bufnr = bufnr,
-      })
-    end,
-  })
 end
 
 M.on_attach = function(client, bufnr)
+  print("attaching methods to client" .. client.name)
   if client.name == "jsonls" then
     client.server_capabilities.documentFormattingProvider = false
   end
   lsp_keymaps(bufnr)
+  format_on_save(client, bufnr)
 end
 
 M.capabilities = require("cmp_nvim_lsp").default_capabilities()

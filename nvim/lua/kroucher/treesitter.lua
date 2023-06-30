@@ -1,4 +1,4 @@
-local configs = require "nvim-treesitter.configs"
+local configs = require("nvim-treesitter.configs")
 
 configs.setup({
   ensure_installed = "all",
@@ -14,8 +14,6 @@ configs.setup({
     -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
     extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
     max_file_lines = nil, -- Do not enable for files with more than n lines, int
-    -- colors = {}, -- table of hex strings
-    -- termcolors = {} -- table of colour name strings
   },
   context_commentstring = {
     enable = true,
@@ -39,3 +37,17 @@ vim.api.nvim_create_autocmd({ "Filetype" }, {
     })
   end,
 })
+
+local colors = {
+  TSRainbowRed = "#d0679d",
+  TSRainbowOrange = "#ff9e64",
+  TSRainbowGreen = "#5de4c7",
+  TSRainbowYellow = "#fffac2",
+  TSRainbowBlue = "#89ddff",
+  TSRainbowViolet = "#fcc5e9",
+  TSRainbowCyan = "#add7ff",
+}
+for i, color in pairs(colors) do
+  vim.cmd("highlight " .. i .. " guifg=" .. color .. " ctermfg=White")
+end
+

@@ -21,10 +21,20 @@ if not lspconfig_status then
   print("lspconfig is not installed")
   return
 end
+
 local lsp_defaults = lspconfig.util.default_config
 
-lsp_defaults.capabilities =
+local capabilities =
   vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.textDocument.completion.completionItem.resolveSupport = {
+  properties = {
+    "documentation",
+    "detail",
+    "additionalTextEdits",
+  },
+}
 
 mason.setup()
 mason_lspconfig.setup({
@@ -43,13 +53,20 @@ mason_lspconfig.setup({
 
 mason_lspconfig.setup_handlers({
   function(server_name)
+    if server_name == "tsserver" then
+      return true
+    end
     require("lspconfig")[server_name].setup({
-      on_attach = require("kroucher.lsp.shared").on_attach,
+      on_attach = function(client, bufnr)
+        require("kroucher.lsp.shared").on_attach(client, bufnr)
+      end,
+      capabilities = capabilities,
     })
   end,
   ["lua_ls"] = function(server_name)
     require("lspconfig")[server_name].setup({
       on_attach = require("kroucher.lsp.shared").on_attach,
+      capabilities = capabilities,
       settings = {
         Lua = {
           diagnostics = {
@@ -68,6 +85,7 @@ mason_lspconfig.setup_handlers({
   ["tailwindcss"] = function(server_name)
     require("lspconfig")[server_name].setup({
       on_attach = require("kroucher.lsp.shared").on_attach,
+      capabilities = capabilities,
       settings = {
         tailwindCSS = {
           experimental = {

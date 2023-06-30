@@ -70,8 +70,8 @@ local plugins = {
 
   -- syntax highlighting
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+  { "HiPhish/nvim-ts-rainbow2" },
 
-  "p00f/nvim-ts-rainbow",
   -- autocompletion
   "hrsh7th/nvim-cmp",
   "hrsh7th/cmp-buffer",
