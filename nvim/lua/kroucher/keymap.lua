@@ -38,3 +38,6 @@ keymap("n", "<C-u>", "<C-u>zz", { noremap = true, silent = true })
 
 -- find and replace
 keymap("n", "<leader>fr", "*``cgn", { noremap = true, silent = true })
+
+-- Run plenary test
+keymap("n", "<leader>t", ":lua require('plenary.test_harness'):test_directory()<CR>", { noremap = true, silent = true })

@@ -18,7 +18,11 @@ require("kroucher.telescope")
 require("kroucher.nvim-cmp")
 require("kroucher.neoscroll")
 require("kroucher.hipatterns")
-require("kroucher.graphite")
 
 vim.g.gitblame_date_format = "%r (%Y-%m-%d)"
 vim.g.gitblame_message_template = "<author>, <date> • <summary>"
+
+-- add local plugin to runtimepath
+vim.cmd("set rtp+=/Users/danieldeveney/graphite.nvim/")
+
+require("graphite")
