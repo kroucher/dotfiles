@@ -84,9 +84,7 @@ M.setup = function()
   })
 end
 
-local function format_on_save(client, bufnr) end
-
-local function lsp_keymaps(bufnr)
+local function lsp_keymaps(client, bufnr)
   local opts = { noremap = true, silent = true }
 
   vim.api.nvim_buf_set_keymap(bufnr, "n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
@@ -102,15 +100,18 @@ local function lsp_keymaps(bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts) -- jump to next diagnostic in buffer
   vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
   vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>o", "<cmd>Lspsaga outline<CR>", opts) -- see outline on right hand side
+
+  if client.name == "typescript-tools" then
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>gsd", "<cmd>TSToolsGoToSourceDefinition<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>ami", "<cmd>TSToolsAddMissingImports<CR>", opts)
+  end
 end
 
 M.on_attach = function(client, bufnr)
-  print("attaching methods to client" .. client.name)
   if client.name == "jsonls" then
     client.server_capabilities.documentFormattingProvider = false
   end
-  lsp_keymaps(bufnr)
-  format_on_save(client, bufnr)
+  lsp_keymaps(client, bufnr)
 end
 
 M.capabilities = require("cmp_nvim_lsp").default_capabilities()

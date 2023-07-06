@@ -11,6 +11,9 @@ saga.setup({
   definition = {
     edit = "<CR>",
   },
+  code_action = {
+    show_server_name = true,
+  },
   ui = {
     border = "rounded",
   },

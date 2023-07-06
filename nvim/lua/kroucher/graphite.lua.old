@@ -315,37 +315,5 @@ function Testing:upstack_onto_selected_branch(current_branch)
   vim.api.nvim_buf_set_option(buf, "bufhidden", "hide")
 end
 
-function Testing:handle_branch_create(input)
-  -- Run the gt branch create command with the branch name
-  local job = Job:new({
-    command = "gt",
-    args = { "branch", "create", input },
-    on_exit = function(j)
-      local output = j:result()
-      local exit_code = j.code
-      vim.schedule(function()
-        if exit_code == 0 then
-          -- The command succeeded, print a success message
-          print("Successfully created branch: " .. input)
-        else
-          -- The command failed, print an error message
-          print("Error creating branch: " .. input)
-          print("Output: " .. table.concat(output, "\n"))
-        end
-      end)
-    end,
-  })
-
-  job:start()
-end
-
-function Testing:gt_branch_create()
-  local input = self:create_input("Create Branch", function(value)
-    self:handle_branch_create(value)
-  end)
-
-  input:mount()
-end
-
 -- Return the plugin namespace
 return Testing

@@ -36,7 +36,15 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   },
 }
 
-mason.setup()
+mason.setup({
+  ui = {
+    icons = {
+      package_installed = "",
+      package_pending = "",
+      package_uninstalled = "",
+    },
+  },
+})
 mason_lspconfig.setup({
   ensure_installed = {
     "dockerls",
@@ -108,4 +116,15 @@ mason_null_ls.setup({
   },
   -- auto-install configured formatters & linters (with null-ls)
   automatic_installation = true,
+})
+
+require("typescript-tools").setup({
+  on_attach = function(client, bufnr)
+    require("kroucher.lsp.shared").on_attach(client, bufnr)
+    require("twoslash-queries").attach(client, bufnr)
+  end,
+  capabilities = capabilities,
+  settings = {
+    publish_diagnostic_on = "change",
+  },
 })

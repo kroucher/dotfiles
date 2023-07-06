@@ -67,6 +67,9 @@ local plugins = {
   {
     "MunifTanjim/nui.nvim",
   },
+  {
+    "rcarriga/nvim-notify",
+  },
 
   -- syntax highlighting
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
@@ -106,6 +109,15 @@ local plugins = {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     opts = {},
+  },
+
+  {
+    "marilari88/twoslash-queries.nvim",
+  },
+
+  -- Rust
+  {
+    "simrat39/rust-tools.nvim",
   },
 
   -- LSP folding
@@ -193,15 +205,12 @@ local plugins = {
   -- comment out lines
   {
     "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup()
-    end,
   },
   "JoosepAlviste/nvim-ts-context-commentstring",
 
   -- Git
   "lewis6991/gitsigns.nvim", -- see git changes
-  { "TimUntersberger/neogit", dependencies = "nvim-lua/plenary.nvim" },
+  { "NeogitOrg/neogit", dependencies = "nvim-lua/plenary.nvim" },
   "f-person/git-blame.nvim", -- see who wrote the lines
   "sindrets/diffview.nvim", -- see git diff
 

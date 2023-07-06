@@ -40,7 +40,9 @@ opt.scrolloff = 8 -- Lines of context
 opt.sidescrolloff = 8 -- Columns of context
 opt.signcolumn = "yes" -- Always show signcolumn
 opt.synmaxcol = 240 -- Max column for syntax highlight
-opt.statuscolumn = '%=%l%s%{foldlevel(v:lnum) > foldlevel(v:lnum - 1) ? (foldclosed(v:lnum) == -1 ? "▼" : "⏵") : " " }'
+opt.statuscolumn =
+  '%=%l%s%{foldlevel(v:lnum) > foldlevel(v:lnum - 1) ? (foldclosed(v:lnum) == -1 ? "▼" : "⏵") : " " }'
+opt.shortmess:append({ c = true }) -- Don't pass messages to |ins-completion-menu|
 
 -----------------------------------------------------------
 -- Tabs, indent

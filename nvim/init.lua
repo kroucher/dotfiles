@@ -18,6 +18,7 @@ require("kroucher.telescope")
 require("kroucher.nvim-cmp")
 require("kroucher.neoscroll")
 require("kroucher.hipatterns")
+-- test
 
 vim.g.gitblame_date_format = "%r (%Y-%m-%d)"
 vim.g.gitblame_message_template = "<author>, <date> • <summary>"

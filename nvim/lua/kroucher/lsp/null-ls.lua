@@ -29,6 +29,7 @@ null_ls.setup({
       },
       args = { "--indent-width", "2", "--indent-type", "Spaces", "-" },
     }),
+    null_ls.builtins.formatting.rustfmt,
   },
   on_attach = function(client, bufnr)
     if client.supports_method("textDocument/formatting") then

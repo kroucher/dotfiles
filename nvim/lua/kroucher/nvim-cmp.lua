@@ -56,9 +56,6 @@ cmp.setup({
       maxwidth = 60,
       symbol_map = { Copilot = "", npm = "" },
       before = function(entry, vim_item)
-        print(vim.inspect(entry.name))
-        print(vim.inspect(vim_item))
-
         vim_item = cmp_tailwind.format(entry, vim_item)
         return vim_item
       end,
