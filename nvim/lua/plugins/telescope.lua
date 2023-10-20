@@ -22,7 +22,7 @@ return {
     opts = {
       defaults = {
         layout_strategy = "horizontal",
-        winblend = 0,
+        winblend = 10,
       },
     },
   },
@@ -35,7 +35,20 @@ return {
       build = "make",
       config = function()
         require("telescope").load_extension("fzf")
+        require("telescope").load_extension("package_info")
       end,
+    },
+  },
+  {
+    "ahmedkhalf/project.nvim",
+    opts = {},
+    event = "VeryLazy",
+    config = function(_, opts)
+      require("project_nvim").setup(opts)
+      require("telescope").load_extension("projects")
+    end,
+    keys = {
+      { "<leader>fP", "<Cmd>Telescope projects<CR>", desc = "Projects" },
     },
   },
 }

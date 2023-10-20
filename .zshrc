@@ -121,8 +121,35 @@ compinit
 
 fpath+=${ZDOTDIR:-~}/.zsh_functions
 
-export prisma="/Users/danieldeveney/Library/pnpm/prisma"
 export DISABLE_AUTO_TITLE='true'
+
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+
+
+# bun completions
+[ -s "/Users/danieldeveney/.bun/_bun" ] && source "/Users/danieldeveney/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+#
+
+
+source /Users/danieldeveney/.config/op/plugins.sh
+source ~/.config/op/plugins.sh
+
+#compdef gt
+_gt_yargs_completions()
+{
+  local reply
+  local si=$IFS
+  IFS=$'
+' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" gt --get-yargs-completions "${words[@]}"))
+  IFS=$si
+  _describe 'values' reply
+}
+compdef _gt_yargs_completions gt
+###-end-gt-completions-###
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"

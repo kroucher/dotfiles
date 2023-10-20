@@ -1,19 +1,43 @@
 return {
-
-  {
-    "rose-pine/neovim",
-    name = "rose-pine",
-    opts = {
-      variant = "moon",
-      disable_background = true,
-      disable_float_background = true,
-    },
-  },
-  -- Configure LazyVim to load poimandres
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "rose-pine",
+      colorscheme = "catppuccin",
+    },
+  },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    opts = {
+      term_colors = false,
+      transparent_background = true,
+      integrations = {
+        cmp = true,
+        dap = {
+          enabled = true,
+          enable_ui = true,
+        },
+      },
+      custom_highlights = function(colors)
+        return {
+          PackageInfoOutdatedVersion = { fg = colors.red },
+          PackageInfoUptodateVersion = { fg = colors.surface2 },
+        }
+      end,
+      styles = {
+        comments = { "italic" },
+        properties = { "italic" },
+        functions = { "bold" },
+        keywords = { "italic" },
+        operators = { "bold" },
+        conditionals = { "bold" },
+        loops = { "bold" },
+        booleans = { "bold", "italic" },
+        numbers = {},
+        types = {},
+        strings = {},
+        variables = {},
+      },
     },
   },
 }
