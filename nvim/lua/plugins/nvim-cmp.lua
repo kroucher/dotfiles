@@ -44,10 +44,10 @@ return {
           completion = cmp.config.window.bordered({
             col_offset = -3,
             side_padding = 0,
-            winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+            winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
           }),
           documentation = cmp.config.window.bordered({
-            winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+            winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
           }),
         },
 
@@ -94,6 +94,7 @@ return {
         },
         sorting = defaults.sorting,
         sources = cmp.config.sources({
+          { name = "copilot" },
           { name = "nvim_lsp" },
           { name = "luasnip" },
           { name = "buffer" },
