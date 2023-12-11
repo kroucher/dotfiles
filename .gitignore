@@ -19,6 +19,7 @@ google-chrome
 chromium
 BraveSoftware
 fish
-op
+op/config
+op/plugins/
 db_ui
 graphite
