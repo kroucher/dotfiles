@@ -8,14 +8,25 @@ fi
 # Fig pre block. Keep at the top of this file.
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:/home/user/.cargo/bin:$PATH
 
-if [[ "$(uname -m)" == "arm64" ]]; then
-  export PATH="/opt/homebrew/bin:${PATH}"
+if [[ -n "$(uname -r | grep 'microsoft')" ]]; then
+    # Add the path to Neovim installed in Windows
+    export PATH="/mnt/c/Program\ Files/Neovim/bin:$PATH"
+else
+    # macOS specific PATH changes
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        export PATH="/opt/homebrew/bin:${PATH}"
+    fi
+    # Other macOS specific configurations...
 fi
+
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+
+# 1Password Alias 
+export op="op.exe"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -166,3 +177,5 @@ source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

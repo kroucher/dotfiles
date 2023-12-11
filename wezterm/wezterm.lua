@@ -2,11 +2,6 @@ local wezterm = require("wezterm")
 local mux = wezterm.mux
 local act = wezterm.action
 
-wezterm.on("gui-startup", function(cmd)
-  local tab, pane, window = mux.spawn_window(cmd or {})
-  window:gui_window():maximize()
-end)
-
 local config = {
   font = wezterm.font("Geist Mono", { weight = "Bold" }),
   font_size = 16,
@@ -198,6 +193,10 @@ config.keys = {
 
 -- Decide whether cmd represents a default startup invocation
 function IsDefaultStartup(cmd)
+	if wezterm.target_triple:match("windows") then
+    -- On Windows, use WSL2 as the default domain
+    return true
+  end
   if not cmd then
     -- we were started with `wezterm` or `wezterm start` with
     -- no other arguments
@@ -212,14 +211,23 @@ function IsDefaultStartup(cmd)
 end
 
 wezterm.on("gui-startup", function(cmd)
-  if IsDefaultStartup(cmd) then
-    -- for the default startup case, we want to switch to the unix domain instead
-    local unix = mux.get_domain("unix")
-    mux.set_default_domain(unix)
-    -- ensure that it is attached
-    unix:attach()
+  -- Check if the environment is Windows and set WSL:Ubuntu as the default domain
+  if wezterm.target_triple:match("windows") then
+    local wsl_domain = mux.get_domain("WSL:Ubuntu")
+    mux.set_default_domain(wsl_domain)
+  else
+    -- For non-Windows environments, set the default to Unix
+    local unix_domain = mux.get_domain("unix")
+    mux.set_default_domain(unix_domain)
+  end
+
+  -- Spawn a single window with the default domain
+  if not cmd or cmd == {} then
+    local tab, pane, window = mux.spawn_window({})
+    window:gui_window():maximize()
   end
 end)
+
 
 config.unix_domains = {
   { name = "unix", connect_automatically = true },
