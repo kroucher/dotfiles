@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /github-copilot
 nvim/pack/*
 tmux/plugins/*
@@ -22,3 +23,30 @@ fish
 op
 db_ui
 graphite
+=======
+/github-copilot
+nvim/pack/*
+tmux/plugins/*
+NuGet
+Ryujinx
+configstore
+gh
+gtk-2.0
+iterm2
+htop
+nvim.bak*
+planetscale
+thefuck
+zed
+.DS_Store
+raycast
+/nvim/env.lua
+google-chrome
+chromium
+BraveSoftware
+fish
+op/config
+op/plugins/
+db_ui
+graphite
+>>>>>>> 27344a4bf3603c542d8b2258582650df02463e61
