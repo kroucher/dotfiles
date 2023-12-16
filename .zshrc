@@ -5,6 +5,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+
 # Fig pre block. Keep at the top of this file.
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 # If you come from bash you might have to change your $PATH.
@@ -12,11 +13,13 @@ export PATH=$HOME/bin:/usr/local/bin:/home/user/.cargo/bin:$PATH
 
 if [[ -n "$(uname -r | grep 'microsoft')" ]]; then
     # Add the path to Neovim installed in Windows
-    export PATH="/mnt/c/Program\ Files/Neovim/bin:$PATH"
+    export PATH="/mnt/c/Program\ Files/Neovim/bin:/mnt/c/Program\ Files\1Password\ CLI\:$PATH"
 else
     # macOS specific PATH changes
     if [[ "$(uname -m)" == "arm64" ]]; then
         export PATH="/opt/homebrew/bin:${PATH}"
+        export="/mnt/c/Users/User/AppData/Roaming/npm/pnpm"
+        source /home/linuxbrew/.linuxbrew/share/powerlevel10k/powerlevel10k.zsh-theme
     fi
     # Other macOS specific configurations...
 fi
@@ -32,7 +35,7 @@ export op="op.exe"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -98,6 +101,7 @@ plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
+source $HOME/.config/.p10k.zsh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -125,14 +129,11 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias vim="nvim"
 
-# pnpm
-export PNPM_HOME="/Users/danieldeveney/Library/pnpm"
+# Add PNPM_HOME to PATH if not already present
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm end
-#
 
 autoload -Uz compinit
 compinit
@@ -153,7 +154,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 #
 
 
-source /Users/danieldeveney/.config/op/plugins.sh
 source ~/.config/op/plugins.sh
 
 #compdef gt
@@ -172,8 +172,6 @@ compdef _gt_yargs_completions gt
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
 source ~/.config/op/plugins.sh
-source ~/.config/op/plugins.sh
-source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

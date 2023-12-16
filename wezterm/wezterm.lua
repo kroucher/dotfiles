@@ -3,7 +3,7 @@ local mux = wezterm.mux
 local act = wezterm.action
 
 local config = {
-  font = wezterm.font("Geist Mono", { weight = "Bold" }),
+  font = wezterm.font("GeistMono NFM"),
   font_size = 16,
   line_height = 1.1,
   color_scheme = "nordfox",
@@ -41,7 +41,7 @@ config.keys = {
   },
   {
     key = '"',
-    mods = "LEADER",
+    mods = "LEADER|SHIFT",
     action = act.SplitVertical({ domain = "CurrentPaneDomain" }),
   },
   -- Move between splits
@@ -193,7 +193,7 @@ config.keys = {
 
 -- Decide whether cmd represents a default startup invocation
 function IsDefaultStartup(cmd)
-	if wezterm.target_triple:match("windows") then
+  if wezterm.target_triple:match("windows") then
     -- On Windows, use WSL2 as the default domain
     return true
   end
@@ -213,7 +213,7 @@ end
 wezterm.on("gui-startup", function(cmd)
   -- Check if the environment is Windows and set WSL:Ubuntu as the default domain
   if wezterm.target_triple:match("windows") then
-    local wsl_domain = mux.get_domain("WSL:Ubuntu")
+    local wsl_domain = mux.get_domain("WSL:Ubuntu-20.04")
     mux.set_default_domain(wsl_domain)
   else
     -- For non-Windows environments, set the default to Unix
@@ -227,7 +227,6 @@ wezterm.on("gui-startup", function(cmd)
     window:gui_window():maximize()
   end
 end)
-
 
 config.unix_domains = {
   { name = "unix", connect_automatically = true },
