@@ -49,4 +49,5 @@ op/config
 op/plugins/
 db_ui
 graphite
+lazygit/*
 >>>>>>> 27344a4bf3603c542d8b2258582650df02463e61
