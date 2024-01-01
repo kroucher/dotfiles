@@ -1,3 +1,3 @@
 return {
-  { "JoosepAlviste/nvim-ts-context-commentstring", lazy = true },
+	{ "JoosepAlviste/nvim-ts-context-commentstring", lazy = true },
 }

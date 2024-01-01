@@ -3,3 +3,5 @@
 -- Add any additional options here
 vim.g.mapleader = "\\"
 vim.opt.conceallevel = 0
+
+vim.opt.cursorline = false

@@ -1,7 +1,7 @@
 return {
-  {
-    "NStefan002/speedtyper.nvim",
-    cmd = "Speedtyper",
-    opts = {},
-  },
+	{
+		"NStefan002/speedtyper.nvim",
+		cmd = "Speedtyper",
+		opts = {},
+	},
 }

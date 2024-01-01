@@ -3,10 +3,11 @@ return {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        "stylua",
+        "beautysh",
+        "prettier",
         "shellcheck",
         "shfmt",
-        "prettierd", -- ts/js formatter
+        "stylua",
       },
     },
   },

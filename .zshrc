@@ -2,7 +2,7 @@
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 
@@ -14,21 +14,27 @@ export PATH=$HOME/bin:/usr/local/bin:/home/user/.cargo/bin:$PATH
 if [[ -n "$(uname -r | grep 'microsoft')" ]]; then
     # Add the path to Neovim installed in Windows
     export PATH="/mnt/c/Program\ Files/Neovim/bin:/mnt/c/Program\ Files\1Password\ CLI\:$PATH"
+    export CUDA_HOME="/usr/local/cuda-12.3"
+    export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 else
     # macOS specific PATH changes
     if [[ "$(uname -m)" == "arm64" ]]; then
-        export PATH="/opt/homebrew/bin:${PATH}"
+        # Homebrew
+        export PATH="/opt/homebrew/bin:$HOME/.local/bin:$CUDA_HOME/bin:${PATH}"
+        # pnpm
         export="/mnt/c/Users/User/AppData/Roaming/npm/pnpm"
+        # Powerlevel10k
         source /home/linuxbrew/.linuxbrew/share/powerlevel10k/powerlevel10k.zsh-theme
+        export WAKATIME_HOME=/home/user/.wakatime
+        # SD
     fi
-    # Other macOS specific configurations...
 fi
 
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# 1Password Alias 
+# 1Password Alias
 export op="op.exe"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -97,7 +103,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git
+         wakatime
+         zsh-autosuggestions
+        )
 
 source $ZSH/oh-my-zsh.sh
 
@@ -128,6 +137,9 @@ source $HOME/.config/.p10k.zsh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias vim="nvim"
+alias ll="colorls -lA --sd"
+alias l="colorls -A --sd"
+alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 
 # Add PNPM_HOME to PATH if not already present
 case ":$PATH:" in
@@ -141,8 +153,7 @@ compinit
 fpath+=${ZDOTDIR:-~}/.zsh_functions
 
 export DISABLE_AUTO_TITLE='true'
-
-alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#939393,bold,underline"
 
 
 # bun completions
@@ -159,10 +170,10 @@ source ~/.config/op/plugins.sh
 #compdef gt
 _gt_yargs_completions()
 {
-  local reply
-  local si=$IFS
-  IFS=$'
-' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" gt --get-yargs-completions "${words[@]}"))
+    local reply
+    local si=$IFS
+    IFS=$'
+    ' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" gt --get-yargs-completions "${words[@]}"))
   IFS=$si
   _describe 'values' reply
 }
@@ -181,3 +192,30 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# pnpm
+export PNPM_HOME="/home/user/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/user/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/user/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/user/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/user/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"

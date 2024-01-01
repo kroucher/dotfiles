@@ -1,8 +1,9 @@
 lastupdatecheck: 0
 recentrepos:
 - /home/user/.config
+- /home/user/rhizomer
 - /mnt/c/users/user/.config
 startuppopupversion: 5
 customcommandshistory: []
 hidecommandlog: false
-ignorewhitespaceindiffview: false
+ignorewhitespaceindiffview: true
