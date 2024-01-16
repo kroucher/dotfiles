@@ -1,47 +1,14 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:/home/user/.cargo/bin:$PATH
-
-if [[ -n "$(uname -r | grep 'microsoft')" ]]; then
-    # Add the path to Neovim installed in Windows
-    export PATH="/mnt/c/Program\ Files/Neovim/bin:/mnt/c/Program\ Files\1Password\ CLI\:$PATH"
-    export CUDA_HOME="/usr/local/cuda-12.3"
-    export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
-else
-    # macOS specific PATH changes
-    if [[ "$(uname -m)" == "arm64" ]]; then
-        # Homebrew
-        export PATH="/opt/homebrew/bin:$HOME/.local/bin:$CUDA_HOME/bin:${PATH}"
-        # pnpm
-        export="/mnt/c/Users/User/AppData/Roaming/npm/pnpm"
-        # Powerlevel10k
-        source /home/linuxbrew/.linuxbrew/share/powerlevel10k/powerlevel10k.zsh-theme
-        export WAKATIME_HOME=/home/user/.wakatime
-        # SD
-    fi
-fi
-
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-
-# 1Password Alias
-export op="op.exe"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -103,14 +70,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git
-         wakatime
-         zsh-autosuggestions
-        )
+plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
-source $HOME/.config/.p10k.zsh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -136,86 +99,39 @@ source $HOME/.config/.p10k.zsh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias vim="nvim"
-alias ll="colorls -lA --sd"
-alias l="colorls -A --sd"
-alias tailscale="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
-# Add PNPM_HOME to PATH if not already present
-case ":$PATH:" in
-    *":$PNPM_HOME:"*) ;;
-    *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
+# If you come from bash you might have to change your $PATH.
+export PATH=$HOME/bin:/usr/local/bin:/home/user/.cargo/bin:$PATH
 
-autoload -Uz compinit
-compinit
+if [[ -n "$(uname -r | grep 'microsoft')" ]]; then
+	# Add the path to Neovim installed in Windows
+	export PATH="/mnt/c/Program\ Files/Neovim/bin:/mnt/c/Program\ Files\1Password\ CLI\:$PATH"
+	export CUDA_HOME="/usr/local/cuda-12.3"
+	export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+else
+	# macOS specific PATH changes
+	if [[ "$(uname -m)" == "arm64" ]]; then
+		# Homebrew
+		export PATH="/opt/homebrew/bin:$HOME/.local/bin:$CUDA_HOME/bin:${PATH}"
+		# pnpm
+	fi
+fi
 
-fpath+=${ZDOTDIR:-~}/.zsh_functions
-
-export DISABLE_AUTO_TITLE='true'
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#939393,bold,underline"
-
-
-# bun completions
-[ -s "/Users/danieldeveney/.bun/_bun" ] && source "/Users/danieldeveney/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-#
-
-
-source ~/.config/op/plugins.sh
-
-#compdef gt
-_gt_yargs_completions()
-{
-    local reply
-    local si=$IFS
-    IFS=$'
-    ' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" gt --get-yargs-completions "${words[@]}"))
-  IFS=$si
-  _describe 'values' reply
-}
-compdef _gt_yargs_completions gt
-###-end-gt-completions-###
-
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
-source ~/.config/op/plugins.sh
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# pnpm
 export PNPM_HOME="/home/user/.local/share/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/user/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/user/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/user/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/user/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
+# fnm
+export PATH="/home/user/.local/share/fnm:$PATH"
+eval "$(fnm env)"

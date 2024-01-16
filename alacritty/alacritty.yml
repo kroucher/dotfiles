@@ -23,7 +23,7 @@ env:
   # each instance of Alacritty. If it is not present, alacritty will
   # check the local terminfo database and use `alacritty` if it is
   # available, otherwise `xterm-256color` is used.
-  TERM: tmux-256color
+  TERM: xterm-256color
 
 window:
   # Window dimensions (changes require restart)
@@ -304,7 +304,7 @@ draw_bold_text_with_bright_colors: true
 # This string contains all characters that are used as separators for
 # "semantic
 #
-shell:
-  program: 'C:\Windows\system32\wsl.exe' 
-
-working_directory: '\\wsl$\Ubuntu-20.04\home\user'
+# shell:
+#   program: 'C:\Windows\system32\wsl.exe'
+#
+# working_directory: '\\wsl$\Ubuntu-20.04\home\user'
