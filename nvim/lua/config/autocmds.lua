@@ -13,6 +13,44 @@ local custom_events = augroup("CustomEvents")
 local opt_local = vim.opt_local
 local treesitter = vim.treesitter
 local lfs = require("lfs")
+local autocmd = vim.api.nvim_create_autocmd
+
+local function db_completion()
+  ---@diagnostic disable-next-line: missing-fields
+  require("cmp").setup.buffer({
+    sources = { { name = "vim-dadbod-completion" } },
+  })
+end
+
+vim.g.db_ui_save_location = vim.fn.stdpath("config")
+  .. require("plenary.path").path.sep
+  .. "db_ui"
+
+autocmd("FileType", {
+  pattern = {
+    "sql",
+  },
+  command = [[setlocal omnifunc=vim_dadbod_completion#omni]],
+})
+
+autocmd("FileType", {
+  pattern = {
+    "sql",
+    "mysql",
+    "plsql",
+  },
+  callback = function()
+    vim.schedule(db_completion)
+  end,
+})
+
+-- Disable Highlight on yank
+autocmd("TextYankPost", {
+  group = augroup("highlight_yank"),
+  callback = function()
+    -- vim.highlight.on_yank()
+  end,
+})
 
 local M = {}
 
@@ -47,43 +85,6 @@ local function find_tailwind_config()
     find_file_in_directory("tailwind.config.ts", current_working_directory)
   return tailwind_config_path_cache
 end
-
-local function db_completion()
-  ---@diagnostic disable-next-line: missing-fields
-  require("cmp").setup.buffer({
-    sources = { { name = "vim-dadbod-completion" } },
-  })
-end
-
-vim.g.db_ui_save_location = vim.fn.stdpath("config")
-  .. require("plenary.path").path.sep
-  .. "db_ui"
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = {
-    "sql",
-  },
-  command = [[setlocal omnifunc=vim_dadbod_completion#omni]],
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = {
-    "sql",
-    "mysql",
-    "plsql",
-  },
-  callback = function()
-    vim.schedule(db_completion)
-  end,
-})
-
--- Disable Highlight on yank
-vim.api.nvim_create_autocmd("TextYankPost", {
-  group = augroup("highlight_yank"),
-  callback = function()
-    -- vim.highlight.on_yank()
-  end,
-})
 
 M.fold = function()
   -- Exit early if this is not a Tailwind CSS project.
@@ -139,25 +140,22 @@ M.fold = function()
   end
 end
 
-vim.api.nvim_create_autocmd(
-  { "BufEnter", "BufWritePost", "TextChanged", "InsertLeave" },
-  {
-    group = custom_events,
-    pattern = { "*.astro", "*.html", "*.tsx" },
-    callback = function()
-      M.fold()
-    end,
-  }
-)
+autocmd({ "BufEnter", "BufWritePost", "TextChanged", "InsertLeave" }, {
+  group = custom_events,
+  pattern = { "*.astro", "*.html", "*.tsx" },
+  callback = function()
+    M.fold()
+  end,
+})
 
-vim.api.nvim_create_autocmd("BufWritePre", {
+autocmd("BufWritePre", {
   group = vim.api.nvim_create_augroup("ts_fix_imports", { clear = true }),
   desc = "Add missing imports and remove unused imports for TS",
   pattern = { "*.ts", "*.tsx" },
   callback = function()
     local params = vim.lsp.util.make_range_params()
     params.context = {
-      only = { "source.addMissingImports.ts", "source.removeUnused.ts" },
+      only = { "source.addMissingImports.ts" },
     }
     local result =
       vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
@@ -171,16 +169,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
             },
           })
           vim.cmd("write")
-        else
-          if r.kind == "source.removeUnused.ts" then
-            vim.lsp.buf.code_action({
-              apply = true,
-              context = {
-                only = { "source.removeUnused.ts" },
-              },
-            })
-            vim.cmd("write")
-          end
         end
       end
     end
