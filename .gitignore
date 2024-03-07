@@ -3,6 +3,13 @@
 /github-copilot
 /nvim/env.lua
 BraveSoftware
+discord
+enchant
+environment*
+fontconfig
+geary
+gnome-session
+result
 Docker Desktop
 Jackett
 NuGet
@@ -45,3 +52,4 @@ tmux/plugins/*
 update-notifier
 user-dirs*
 zed
+connections\\.db

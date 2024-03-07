@@ -3,10 +3,10 @@
   settings =
     {
       env = {
-        term = "tmux-256color";
+        term = "xterm-256color";
       };
       font = {
-        size = 14;
+        size = 22;
         normal = {
           family = "GeistMono Nerd Font Mono";
         };
@@ -22,8 +22,8 @@
         opacity = 0.9;
         startup_mode = "Windowed";
         dimensions = {
-          columns = 250;
-          lines = 60;
+          columns = 300;
+          lines = 90;
         };
         padding = {
           x = 10;

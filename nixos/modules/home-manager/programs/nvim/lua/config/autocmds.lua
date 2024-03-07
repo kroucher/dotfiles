@@ -12,7 +12,7 @@ local tailwind_config_path_cache = nil
 local custom_events = augroup("CustomEvents")
 local opt_local = vim.opt_local
 local treesitter = vim.treesitter
-local lfs = require("lfs")
+-- local lfs = require("lfs")
 local autocmd = vim.api.nvim_create_autocmd
 
 local function db_completion()
@@ -52,102 +52,102 @@ autocmd("TextYankPost", {
   end,
 })
 
-local M = {}
-
--- Recursive function to find a file in a directory and its subdirectories
-local function find_file_in_directory(target_file, directory)
-  for file in lfs.dir(directory) do
-    if file ~= "." and file ~= ".." then
-      local path = directory .. "/" .. file
-      local attr = lfs.attributes(path)
-      if attr.mode == "directory" then
-        local found_path = find_file_in_directory(target_file, path)
-        if found_path then
-          return found_path
-        end
-      elseif file == target_file then
-        return path
-      end
-    end
-  end
-  return nil
-end
-
--- Function to find the tailwind.config.ts file starting from the current working directory
-local function find_tailwind_config()
-  -- Return cached path if available
-  if tailwind_config_path_cache then
-    return tailwind_config_path_cache
-  end
-
-  local current_working_directory = vim.fn.getcwd()
-  tailwind_config_path_cache =
-    find_file_in_directory("tailwind.config.ts", current_working_directory)
-  return tailwind_config_path_cache
-end
-
-M.fold = function()
-  -- Exit early if this is not a Tailwind CSS project.
-  local config_path = find_tailwind_config()
-  if not config_path then
-    print("tailwind.config.ts not found in the project")
-    return
-  end
-
-  local ok, tailwind_config = pcall(io.open, config_path, "r")
-  if ok and tailwind_config then
-    tailwind_config:close()
-  -- Fall through.
-  else
-    print("Error opening file:", tailwind_config) -- Assuming tailwind_config is the error message
-    return
-  end
-
-  -- Enable 'conceallevel' option, this will do the actual hidding of HTML class
-  -- attributes.
-  opt_local.conceallevel = 2
-
-  local bufnr = vim.api.nvim_get_current_buf()
-  local conceal_ns = vim.api.nvim_create_namespace("class_conceal")
-  local language_tree = treesitter.get_parser(bufnr, "html")
-  local syntax_tree = language_tree:parse()
-  local root = syntax_tree[1]:root()
-
-  local query = [[
-    ((attribute
-      (attribute_name) @att_name (#eq? @att_name "className")
-      (quoted_attribute_value (attribute_value) @class_value) (#set! @class_value conceal "…")))
-  ]]
-
-  local ts_query
-  ok, ts_query = pcall(treesitter.query.parse, "html", query)
-  if not ok then
-    return
-  end
-
-  for _, captures, metadata in
-    ts_query:iter_matches(root, bufnr, root:start(), root:end_(), {})
-  do
-    local start_row, start_col, end_row, end_col = captures[2]:range()
-    -- This conditional prevents conceal leakage if the class attribute is erroneously formed.
-    if (end_row - start_row) == 0 then
-      vim.api.nvim_buf_set_extmark(bufnr, conceal_ns, start_row, start_col, {
-        end_line = end_row,
-        end_col = end_col,
-        conceal = metadata[2].conceal,
-      })
-    end
-  end
-end
-
-autocmd({ "BufEnter", "BufWritePost", "TextChanged", "InsertLeave" }, {
-  group = custom_events,
-  pattern = { "*.astro", "*.html", "*.tsx" },
-  callback = function()
-    M.fold()
-  end,
-})
-
+-- local M = {}
+--
+-- -- Recursive function to find a file in a directory and its subdirectories
+-- local function find_file_in_directory(target_file, directory)
+--   for file in lfs.dir(directory) do
+--     if file ~= "." and file ~= ".." then
+--       local path = directory .. "/" .. file
+--       local attr = lfs.attributes(path)
+--       if attr.mode == "directory" then
+--         local found_path = find_file_in_directory(target_file, path)
+--         if found_path then
+--           return found_path
+--         end
+--       elseif file == target_file then
+--         return path
+--       end
+--     end
+--   end
+--   return nil
+-- end
+--
+-- -- Function to find the tailwind.config.ts file starting from the current working directory
+-- local function find_tailwind_config()
+--   -- Return cached path if available
+--   if tailwind_config_path_cache then
+--     return tailwind_config_path_cache
+--   end
+--
+--   local current_working_directory = vim.fn.getcwd()
+--   tailwind_config_path_cache =
+--     find_file_in_directory("tailwind.config.ts", current_working_directory)
+--   return tailwind_config_path_cache
+-- end
+--
+-- M.fold = function()
+--   -- Exit early if this is not a Tailwind CSS project.
+--   local config_path = find_tailwind_config()
+--   if not config_path then
+--     print("tailwind.config.ts not found in the project")
+--     return
+--   end
+--
+--   local ok, tailwind_config = pcall(io.open, config_path, "r")
+--   if ok and tailwind_config then
+--     tailwind_config:close()
+--   -- Fall through.
+--   else
+--     print("Error opening file:", tailwind_config) -- Assuming tailwind_config is the error message
+--     return
+--   end
+--
+--   -- Enable 'conceallevel' option, this will do the actual hidding of HTML class
+--   -- attributes.
+--   opt_local.conceallevel = 2
+--
+--   local bufnr = vim.api.nvim_get_current_buf()
+--   local conceal_ns = vim.api.nvim_create_namespace("class_conceal")
+--   local language_tree = treesitter.get_parser(bufnr, "html")
+--   local syntax_tree = language_tree:parse()
+--   local root = syntax_tree[1]:root()
+--
+--   local query = [[
+--     ((attribute
+--       (attribute_name) @att_name (#eq? @att_name "className")
+--       (quoted_attribute_value (attribute_value) @class_value) (#set! @class_value conceal "…")))
+--   ]]
+--
+--   local ts_query
+--   ok, ts_query = pcall(treesitter.query.parse, "html", query)
+--   if not ok then
+--     return
+--   end
+--
+--   for _, captures, metadata in
+--     ts_query:iter_matches(root, bufnr, root:start(), root:end_(), {})
+--   do
+--     local start_row, start_col, end_row, end_col = captures[2]:range()
+--     -- This conditional prevents conceal leakage if the class attribute is erroneously formed.
+--     if (end_row - start_row) == 0 then
+--       vim.api.nvim_buf_set_extmark(bufnr, conceal_ns, start_row, start_col, {
+--         end_line = end_row,
+--         end_col = end_col,
+--         conceal = metadata[2].conceal,
+--       })
+--     end
+--   end
+-- end
+--
+-- autocmd({ "BufEnter", "BufWritePost", "TextChanged", "InsertLeave" }, {
+--   group = custom_events,
+--   pattern = { "*.astro", "*.html", "*.tsx" },
+--   callback = function()
+--     M.fold()
+--   end,
+-- })
+--
 autocmd("BufWritePre", {
   group = vim.api.nvim_create_augroup("ts_fix_imports", { clear = true }),
   desc = "Add missing imports and remove unused imports for TS",

@@ -49,6 +49,8 @@
       layout = "us";
     };
   };
+  services.xserver.autoRepeatDelay = 200;
+  services.xserver.autoRepeatInterval = 50;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -73,7 +75,7 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
   programs.zsh.enable = true;
- # programs.nix-ld.enable = true;
+  # programs.nix-ld.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.daniel = {
@@ -81,24 +83,23 @@
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       alacritty
+      discord
       firefox
       gcc
       gh
       git
       google-chrome
-      neovim
-      nodejs
-      ripgrep
       lazygit
-      nerdfonts
-      lua54Packages.luafilesystem
-      zsh
-      oh-my-zsh
-      tmux
-      #rust-analyzer
       lua-language-server
+      lua54Packages.luafilesystem
+      neovim
+      nerdfonts
+      nodejs
+      oh-my-zsh
+      ripgrep
       statix
-      #  thunderbird
+      tmux
+      zsh
     ];
     shell = pkgs.zsh;
 

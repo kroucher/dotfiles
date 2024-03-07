@@ -1,0 +1,1 @@
+: 1709826184:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default

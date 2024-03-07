@@ -17,14 +17,14 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      homeConfigurations = {
-        "daniel" = inputs.home-manager.lib.homeManagerConfiguration {
-          system = "x86_64-linux";
-          homeDirectory = "/home/daniel";
-          username = "daniel";
-          configuration.imports = [ ./hosts/default/home.nix ];
-        };
-      };
+      #homeConfigurations = {
+      #  "daniel" = inputs.home-manager.lib.homeManagerConfiguration {
+      #    system = "x86_64-linux";
+      #    homeDirectory = "/home/daniel";
+      #    username = "daniel";
+      #    configuration.imports = [ ./hosts/default/home.nix ];
+      #  };
+      #};
       nixosConfigurations = {
         default = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
