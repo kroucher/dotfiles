@@ -1,0 +1,19 @@
+nvim .
+sudo nixos-rebuild switch --flake ~/.config/nixos#default
+nvim .
+sudo nixos-rebuild switch --flake ~/.config/nixos#default
+cd ..
+nvim .
+cd ../.config
+nvim .
+sudo nvim .
+nvim .
+sudo nixos-rebuild switch --flake ~/.config/nixos#default
+cd ../rhizomer-install
+nvim .
+rust-analyzer
+cd ../.config
+nvim .
+sudo nixos-rebuild switch --flake ~/.config/nixos#default
+rust-analyzer
+exit

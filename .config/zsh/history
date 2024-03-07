@@ -1,0 +1,88 @@
+sudo nixos-rebuild switch --flake ~/.config/nixos#default
+exit
+: 1709733561:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709733282:614;nvim .
+: 1709733937:0;nvim .
+: 1709733965:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709734006:0;cargo
+: 1709734011:0;which rust-analyzer
+: 1709734017:0;nvim .
+: 1709734031:0;which rust-analyzer
+: 1709734033:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709734043:0;cargo
+: 1709734046:0;rust-analyzer --version
+: 1709734054:0;which rust-analyzer
+: 1709734062:0;nvim .
+: 1709734173:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709734181:0;sudo nixos-rebuild switch --flake ~/.config/nixos#daniel
+: 1709734185:0;sudo nixos-rebuild switch --flake ~/.config/nixos
+: 1709734196:0;nvim .\ 
+: 1709734196:0;nvim .
+: 1709734230:0;sudo nixos-rebuild switch --flake ~/.config/nixos
+: 1709734233:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709734242:0;which rust-analyzer
+: 1709734244:0;nvim .
+: 1709734272:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709734281:0;which rust-analyzer
+: 1709734287:0;nvim .
+: 1709734327:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709734337:0;nvim .
+: 1709734391:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709736958:0;nvim .
+: 1709737413:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709737421:0;nvim .
+: 1709737442:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709737456:0;which rust-analyzer
+: 1709737458:0;nvim .
+: 1709738434:0;which rust-analyzer
+: 1709738436:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709738452:0;which rust-analyzer
+: 1709738454:0;nvim .
+: 1709738464:0;cd ../rhizomer-install
+: 1709738650:0;nvim .
+: 1709739579:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709739624:0;nvim .
+: 1709801895:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709801899:0;nvim .
+: 1709801919:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709801937:0;nvim .
+: 1709802667:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709802850:0;nvim .
+: 1709802858:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709802879:0;nvim .
+: 1709802992:0;mv nvim nvim.bak
+: 1709802997:0;mv nvim.old nvim
+: 1709803000:0;ll
+: 1709803002:0;nvim .
+: 1709803157:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709803184:0;echo $XDG_CONFIG_HOME
+: 1709803231:0;nvim .
+: 1709803245:0;mv nvim.old2 nvim
+: 1709803246:0;nvim .
+: 1709803512:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709803529:0;git add .
+: 1709803530:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709803543:0;nvim .
+: 1709803644:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709803652:0;nvim .
+: 1709803680:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709803689:0;nvim .
+: 1709803730:0;nix-shell -p home-manager
+: 1709803998:0;nvim .
+: 1709804656:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709804674:0;which rust-analyzer
+: 1709804676:0;nvim .
+: 1709804693:0;which rust-analyzer
+: 1709804696:0;nvim .
+: 1709804781:0;which rust-analyzer
+: 1709804818:0;nvim .
+: 1709804908:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709804955:0;nvim .
+: 1709804979:0;sudo nixos-rebuild switch --flake ~/.config/nixos#default
+: 1709805003:0;nvim .
+: 1709805171:0;
+: 1709805182:0;nvim .
+: 1709805227:0;nix run "github:thiagokokada/nix-alien#nix-alien" -- /home/daniel/.local/share/nvim/mason/bin/rust-analyzer
+: 1709805528:0;nix run "github:thiagokokada/nix-alien#nix-alien-find-libs" -- /home/daniel/.local/share/nvim/mason/bin/rust-analyzer
+: 1709805540:0;nix run "github:thiagokokada/nix-alien#nix-alien-ld" -- /home/daniel/.local/share/nvim/mason/bin/rust-analyzer
+: 1709805894:0;nix run "github:thiagokokada/nix-alien#nix-alien" -- /home/daniel/.local/share/nvim/mason/bin/rust-analyzer

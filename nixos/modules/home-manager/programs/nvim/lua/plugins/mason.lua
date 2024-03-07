@@ -16,7 +16,6 @@ return {
         "markdownlint",
         "marksman",
         "prettier",
-        "rust-analyzer",
         "shellcheck",
         "shfmt",
         "stylua",

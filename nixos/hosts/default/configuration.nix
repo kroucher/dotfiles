@@ -38,7 +38,9 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+  };
 
   # Configure keymap in X11
   services.xserver = {
@@ -71,13 +73,14 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
   programs.zsh.enable = true;
+  programs.nix-ld.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.daniel = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       alacritty
-      cargo
       firefox
       gcc
       gh
@@ -85,7 +88,6 @@
       google-chrome
       neovim
       nodejs
-      rustup
       ripgrep
       lazygit
       nerdfonts
@@ -93,6 +95,9 @@
       zsh
       oh-my-zsh
       tmux
+      #rust-analyzer
+      lua-language-server
+      statix
       #  thunderbird
     ];
     shell = pkgs.zsh;
@@ -102,7 +107,11 @@
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
     users = {
-      "daniel" = import ./home.nix;
+      "daniel" = {
+        imports = [
+          ./home.nix
+        ];
+      };
     };
   };
 
@@ -113,9 +122,16 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
+    vimPlugins.LazyVim
+    vimPlugins.crates-nvim
   ];
+
+  environment.sessionVariables =
+    rec {
+      PATH = [
+        "$HOME/.local/share/nvim/mason/bin/:$PATH"
+      ];
+    };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
