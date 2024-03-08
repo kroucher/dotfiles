@@ -16,14 +16,14 @@
   ];
   shellAliases = {
     ll = "ls -l";
-    update = "sudo nixos-rebuild switch";
+    update = "sudo nixos-rebuild switch --flake ~/.config/nixos#default";
   };
   history.size = 10000;
-  history.path = ".config/zsh/history";
+  history.path = "/home/daniel/.config/zsh/history";
   dotDir = ".config/";
   oh-my-zsh = {
     enable = true;
-    plugins = [ "git" "rust" "zsh-autosuggestions" ];
+    plugins = [ "git" "rust" ];
     theme = "robbyrussell";
   };
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, home, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   alacrittySettings = import ../../modules/home-manager/programs/terminal/alacritty/alacritty-settings.nix;
@@ -25,12 +25,16 @@ in
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    (pkgs.nerdfonts.override { fonts = [ "GeistMono" ]; })
+    (nerdfonts.override { fonts = [ "GeistMono" ]; })
   ];
 
   home.file."${config.xdg.configHome}/nvim" = {
     source = ../../modules/home-manager/programs/nvim;
     recursive = true;
+  };
+
+  home.file."/home/daniel/.tmux" = {
+    source = ../../../tmux;
   };
 
   home.file."/home/daniel/.tmux.conf" = {
@@ -71,6 +75,37 @@ in
     EDITOR = "nvim";
   };
 
+  gtk = {
+
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+
+    theme = {
+      name = "palenight";
+      package = lib.mkDefault pkgs.palenight-theme;
+    };
+
+    cursorTheme = {
+      name = "Numix-Cursor";
+      package = pkgs.numix-cursor-theme;
+    };
+
+    gtk3.extraConfig = {
+      Settings = ''
+        gtk-application-prefer-dark-theme=1
+      '';
+    };
+
+    gtk4.extraConfig = {
+      Settings = ''
+        gtk-application-prefer-dark-theme=1
+      '';
+    };
+  };
+
+  home.sessionVariables.GTK_THEME = "palenight";
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }

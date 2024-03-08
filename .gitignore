@@ -48,8 +48,15 @@ pulse
 raycast
 remmina
 thefuck
-tmux/plugins/*
 update-notifier
 user-dirs*
 zed
-connections\\.db
+connections.db
+tt.*
+.tests
+doc/tags
+debug
+.repro
+foo.*
+*.log
+data

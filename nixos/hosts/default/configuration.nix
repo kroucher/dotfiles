@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ pkgs, inputs, config, lib, ... }:
 
 {
   imports =
@@ -75,14 +75,20 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
   programs.zsh.enable = true;
-  # programs.nix-ld.enable = true;
+  programs.nix-ld.enable = true;
 
+  nix = {
+    package = pkgs.nixFlakes;
+    extraOptions = lib.optionalString (config.nix.package == pkgs.nixFlakes)
+      "experimental-features = nix-command flakes";
+  };
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.daniel = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       alacritty
+      cargo
       discord
       firefox
       gcc
@@ -92,14 +98,17 @@
       lazygit
       lua-language-server
       lua54Packages.luafilesystem
+      lxappearance
       neovim
       nerdfonts
       nodejs
       oh-my-zsh
       ripgrep
+      rustup
       statix
       tmux
       zsh
+      gnome.gnome-tweaks
     ];
     shell = pkgs.zsh;
 
@@ -128,7 +137,7 @@
   ];
 
   environment.sessionVariables =
-    rec {
+    {
       PATH = [
         "$HOME/.local/share/nvim/mason/bin/:$PATH"
       ];

@@ -6,7 +6,7 @@
         term = "xterm-256color";
       };
       font = {
-        size = 22;
+        size = 18;
         normal = {
           family = "GeistMono Nerd Font Mono";
         };
@@ -22,7 +22,7 @@
         opacity = 0.9;
         startup_mode = "Windowed";
         dimensions = {
-          columns = 300;
+          columns = 250;
           lines = 90;
         };
         padding = {
