@@ -26,7 +26,6 @@ environment*
 evolution
 fish
 fontconfig
-foo.*
 geary
 gh
 gnome-initial*
@@ -63,4 +62,4 @@ tt.*
 update-notifier
 user-dirs*
 zed
-zsh/history*
+zsh
