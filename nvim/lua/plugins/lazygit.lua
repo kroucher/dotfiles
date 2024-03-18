@@ -1,1 +1,1 @@
-/nix/store/w6xm41649da0lb9s6q1wy6xmlwgymx9x-home-manager-files/.config/nvim/lua/plugins/lazygit.lua
+/nix/store/j1mvdkv4wcj98pm3s6iak26km6pvwgny-home-manager-files/.config/nvim/lua/plugins/lazygit.lua

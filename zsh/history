@@ -1,1 +1,278 @@
-: 1709731709:0;cd rhizomer-install
+cd rhizomer-install
+git pull
+update
+sway
+tmux
+nvim .
+tmux
+nvim .
+exit
+tmux
+cd .config
+nvim .
+cd .config
+nvim .
+exit
+update
+git add .
+update
+sway
+cd .config
+nvim .
+update
+sudo nixos-rebuild build --flake ~/.config/nixos#default
+git add .
+sudo nixos-rebuild build --flake ~/.config/nixos#default
+sudo nixos-rebuild switch --flake ~/.config/nixos#default
+update
+nix develop -p home-manager
+nix-shell -p home-manager
+update
+nix flake show
+nix flake show nixpkgs
+nix registry list
+update
+cd ~/.ssh
+ll
+nvim id_ed25519
+nvim id_ed25519.pub
+ssh-keygen -t ed25519 -C kroucher.1019@gmail.com
+nvim id_ed25519.pub
+sway
+cd ~/.ssh
+nvim id_ed25519.pub
+ssh -T git@github.com
+update
+cd .config
+nvim .
+cd config
+nvim config
+update
+chmod 600 ~/.ssh/config
+update
+nvim config
+update
+cd
+git clone git@github.com:mitchellh/ghostty.git
+nvim ~/.ssh/config
+git clone git@github.com:mitchellh/ghostty.git
+update
+ssh-add -l
+eval "$(ssh-agent -s)"
+ssh-add -l
+ssh-add ~/.ssh/id_ed25519
+update
+nix flake update
+cd nixos
+nix flake update
+update
+exit
+exit
+nvim .config
+exit
+cd .config
+nvim .
+exit
+tmux
+exit
+ghostty -e tmux
+exit
+exit
+nvim .config
+exit
+nvim .
+cd ruzomer
+git checkout main
+git pull
+gh auth login
+git pull
+cargo run
+nix shell
+nvim .
+nix shell
+nix-shell
+nix develop
+nix-develop
+cd .config
+nvim .
+update
+nix-develop
+source ~/.zshrc
+source ~/.config/.zshrc
+nix-develop
+cargo run
+cargo run --hmac-key 1234
+cargo run -- --hmac-key 1234
+sqlx 
+sqlx database drop
+sqlx migrate run
+sqlx database create
+sqlx migrate run
+sqlx migrate run -h
+sqlx migrate run --target-version 4
+sqlx database drop
+sqlx database create
+sqlx migrate run --target-version 4
+cargo run -- --hmac-key 1234
+nix-develop
+source ~/.config/.zshrc
+nix-develop
+cd ruzomer
+nix-develop
+nvim .
+sqlx database drop
+sqlx database create
+cargo run -- --hmac-key 1234
+sqlx migrate run --target-version 4
+cargo run -- --hmac-key 1234
+nitrogen
+cd .config
+nvim .
+update
+nitrogen
+cd .config
+nvim .
+nitrogen --set-auto ~/.config/ghostty/background.jpg
+nitrogen --restore
+man nitrogen
+nitrogen --set-auto ~/.config/ghostty/background.jpg
+swaybg
+nvim .
+update
+swaybg
+swaybg ~/.config/ghostty/background.jpg
+swaybg -i ~/.config/ghostty/background.jpg
+sway
+cd .config
+nvim .
+swaybg -o * -i ~/Pictures/503027.jpg -m fill\
+
+swaybg -i ~/Pictures/503027.jpg -m fill\
+
+logout
+logout
+sway
+nvim .config
+swaymsg
+ghostty +show-config --default --docs
+ghostty +show-config --default --docs > ghostty.config
+exit
+nvim .config
+exit
+exit
+nvim .config
+exit
+nvim .config
+exit
+nvim ruzomer
+cd ruzomer
+nix-develop
+cd ruzomer
+nix-develop
+cd .config
+nvim .
+update
+nvim .
+exit
+xit
+exit
+exit
+exit
+cd ruzomer
+nix-develop
+cd ruzomer
+nix-develop
+nvim .
+cd .config
+nvim .
+update
+nvim .
+update
+nvim .
+update
+nvim .
+update
+nvim .
+update
+nvim .
+cd autostart
+pandoc -D latex > default-template.tex
+pandoc -s -N --template=default-template.tex testing.md -o testing.pdf
+git checkout sam/lagacy
+git pull
+git merge main
+cargo install
+cargo build
+git push -u origin sam/lagacy
+git revert [200~use axum::{
+use regex::Regex;
+use serde::Serialize;
+use sqlx::SqlitePool;
+use crate::AppJson;
+pub fn legacy_api_router() -> Router<SqlitePool> {
+#[derive(Serialize)]
+struct LegacyErrorResponse {
+async fn validate_mac(mac: &str) -> Option<String> {
+const LEGACY_IIS_NOT_FOUND_RESPONSE: &str = "<html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/>\r\n<title>404 - File or directory not found.</title>\r\n<style type=\"text/css\">\r\n<!--\r\nbody{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}\r\nfieldset{padding:0 15px 10px 15px;} \r\nh1{font-size:2.4em;margin:0;color:#FFF;}\r\nh2{font-size:1.7em;margin:0;color:#CC0000;} \r\nh3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} \r\n#header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;\r\nbackground-color:#555555;}\r\n#content{margin:0 0 0 2%;position:relative;}\r\n.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}\r\n-->\r\n</style>\r\n</head>\r\n<body>\r\n<div id=\"header\"><h1>Server Error</h1></div>\r\n<div id=\"content\">\r\n <div class=\"content-container\"><fieldset>\r\n  <h2>404 - File or directory not found.</h2>\r\n  <h3>The resource you are looking for might have been removed, had its name changed, or is temporarily unavailable.</h3>\r\n </fieldset></div>\r\n</div>\r\n</body>\r\n</html>\r\n";
+#[derive(Debug, Serialize)]
+struct TaskResult {
+async fn get_computer_taskcode(\
+    State(pool): State<SqlitePool>,
+#[derive(Debug, Serialize)]
+struct StatusResult {
+async fn get_computer_statuscode(\
+    State(pool): State<SqlitePool>,
+#[derive(Debug, Serialize)]
+struct ComputerResult {
+async fn set_computer_taskcode(\
+    State(pool): State<SqlitePool>,
+git revert \
+da2b1e0\
+
+git revert da2b1e0\
+da2b1e0\
+
+git revert da2b1e0 -m "restore legacy file"
+clear
+git revert HEAD
+git revert HEAD -m "revert merge conflicts"
+git checkout main
+git pull
+cargo build
+cargo run
+cargo run -- --hmac-key 1234
+cd ruzomer
+cargo test
+nix-develop
+cargo test
+cargo run -- --hmac-key "1234"
+cargo
+cargo r
+cargo run -- --hmac-key "1234"
+cargo test
+cargo run -- --hmac-key "1234"
+cargo test
+cargo run -- --hmac-key "1234"
+cargo test
+cd rhizomer
+nvim .
+cd rhizomer/oximigrate
+exit
+: 1710767492:0;cargo run -- --hmac-key "1234"
+: 1710767745:0;cargo build
+: 1710767750:0;nix-develop
+: 1710767753:0;cargo build
+: 1710767863:0;nix-develop
+: 1710767881:0;git add .
+: 1710767886:0;nix-develop
+: 1710767892:0;cargo build
+: 1710768263:0;update
+: 1710769132:0;1
+: 1710769175:0;reboot
+: 1710769213:0;sway
+: 1710769226:0;update
+: 1710769244:0;nvim .config
+: 1710769258:0;update
+: 1710769769:0;cd .config
+: 1710769772:0;git status
+: 1710769786:0;git add .

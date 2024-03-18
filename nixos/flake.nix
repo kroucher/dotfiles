@@ -8,9 +8,12 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ghostty = {
+      url = "git+ssh://git@github.com/mitchellh/ghostty";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ghostty, ... }@inputs:
     {
       nixosConfigurations = {
         default = nixpkgs.lib.nixosSystem {
@@ -20,6 +23,11 @@
             ./hosts/default/configuration.nix
             inputs.home-manager.nixosModules.default
             home-manager.nixosModules.home-manager
+            {
+              environment.systemPackages = [
+                ghostty.packages.x86_64-linux.default
+              ];
+            }
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;

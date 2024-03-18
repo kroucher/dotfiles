@@ -22,6 +22,28 @@ in
 
   programs.zsh = zshSettings;
   programs.alacritty = alacrittySettings;
+
+  programs.i3status-rust = {
+    enable = true;
+    bars = {
+      default = {
+        settings = {
+          theme = {
+            theme = "ctp-mocha";
+          };
+          icons = {
+            icons = "material-nf";
+          };
+        };
+        #     blocks = [
+        #       { block = "focused_window"; format = "$title.str(max_w:180)|Missing"; }
+        #       { block = "load"; format = "{1m} {5m} {15m}"; interval = 1; }
+        #       { block = "memory"; }
+        #       { block = "time"; format = "$timestamp.datetime(f:'⏰ %F %a %T', l:en_US)"; interval = 1; }
+        #     ];
+      };
+    };
+  };
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [

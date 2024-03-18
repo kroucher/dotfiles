@@ -5,7 +5,7 @@ output DP-1 scale 1.5
 
 set $mod Mod4
 
-font pango:GeistMono Nerd Font 10
+font pango:GeistMono Nerd Font 13
 
 # autostart
 # exec --no-startup-id dex --autostart --environment i3
@@ -14,7 +14,9 @@ font pango:GeistMono Nerd Font 10
 # exec --no-startup-id ~/AppImages/kDrive-3.5.7.20240124-amd64.AppImage
 
 # exec --no-startup-id xrandr --output DP-0 --mode 5120x2160 --pos 0x0 --rotate normal
+# exec --no-startup-id swaybg -o * -i ~/Pictures/503027.jpg -m fill
 # exec_always --no-startup-id feh --bg-scale ~/Pictures/wallpaper.jpg
+output "*" bg ~/Pictures/503027.jpg fill
 
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
@@ -40,7 +42,7 @@ bindsym Print exec grim -g "$(slurp)" "$HOME/Pictures/Screenshots/$(date -u +'%Y
 floating_modifier $mod
 # tiling_drag modifier titlebar
 
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec ghostty -e tmux
 bindsym $mod+t exec thunar
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec --no-startup-id dmenu_run
@@ -115,6 +117,11 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
+input * {
+    repeat_delay 250
+    repeat_rate 90
+  }
+
 set $bg-color #2f343f
 set $inactive-bg-color #2f343f
 set $text-color #f3f4f5
@@ -122,8 +129,8 @@ set $inactive-text-color #676e7d
 set $urgent-bg-color #e53935
 
 bar {
-  # status_command i3blocks -c ~/.config/i3/i3blocks.conf
-  status_command i3status
+  status_command i3status-rs ~/.config/i3status-rust/config-default.toml
+  # status_command i3status
   # colors {
   #   background $bg-color
   #   separator #757575

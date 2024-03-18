@@ -14,6 +14,7 @@ local opt_local = vim.opt_local
 local treesitter = vim.treesitter
 -- local lfs = require("lfs")
 local autocmd = vim.api.nvim_create_autocmd
+local keymap = vim.keymap
 
 local function db_completion()
   ---@diagnostic disable-next-line: missing-fields
@@ -23,8 +24,8 @@ local function db_completion()
 end
 
 vim.g.db_ui_save_location = vim.fn.stdpath("config")
-  .. require("plenary.path").path.sep
-  .. "db_ui"
+    .. require("plenary.path").path.sep
+    .. "db_ui"
 
 autocmd("FileType", {
   pattern = {
@@ -52,6 +53,16 @@ autocmd("TextYankPost", {
   end,
 })
 
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*.md",
+  callback = function()
+    vim.keymap.set("n", "<leader>go", function()
+      require("auto-pandoc").run_pandoc()
+    end, { silent = true, buffer = 0 })
+  end,
+  group = vim.api.nvim_create_augroup("setAutoPandocKeymap", {}),
+  desc = "Set keymap for auto-pandoc",
+})
 -- local M = {}
 --
 -- -- Recursive function to find a file in a directory and its subdirectories
@@ -158,7 +169,7 @@ autocmd("BufWritePre", {
       only = { "source.addMissingImports.ts" },
     }
     local result =
-      vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+        vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
     for _, res in pairs(result or {}) do
       for _, r in pairs(res.result or {}) do
         if r.kind == "source.addMissingImports.ts" then

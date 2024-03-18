@@ -1,8 +1,9 @@
 lastupdatecheck: 0
 recentrepos:
+- /home/daniel/ruzomer
 - /home/daniel/.config
 startuppopupversion: 5
 customcommandshistory:
 - qa
 hidecommandlog: false
-ignorewhitespaceindiffview: true
+ignorewhitespaceindiffview: false

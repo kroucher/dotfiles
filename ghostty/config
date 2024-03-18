@@ -1,0 +1,13 @@
+title = 👻
+background-opacity = 0.9
+unfocused-split-opacity = 0.95
+
+font-size = 15
+
+font-family = GeistMono Nerd Font
+theme = catppuccin-mocha
+
+window-decoration = false
+
+
+

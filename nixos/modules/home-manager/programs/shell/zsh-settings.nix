@@ -1,7 +1,10 @@
 {
   enable = true;
   enableCompletion = true;
-  enableAutosuggestions = true;
+  autosuggestion =
+    {
+      enable = true;
+    };
   syntaxHighlighting.enable = true;
 
   plugins = [
@@ -17,6 +20,8 @@
   shellAliases = {
     ll = "ls -l";
     update = "sudo nixos-rebuild switch --flake ~/.config/nixos#default";
+    # nix develop with zsh
+    nix-develop = "nix develop --command zsh";
   };
   history.size = 10000;
   history.path = "/home/daniel/.config/zsh/history";
@@ -26,5 +31,23 @@
     plugins = [ "git" "rust" ];
     theme = "robbyrussell";
   };
+  initExtra = ''
+    # Save the original prompt setup
+    ORIGINAL_PROMPT="$PROMPT"
+
+    # Function to update the prompt
+    update_prompt() {
+      if [[ -n $IN_NIX_SHELL ]]; then
+        # If inside a Nix shell, modify the prompt
+        PROMPT="[] $ORIGINAL_PROMPT"
+      else
+        # If not in a Nix shell, use the original prompt
+        PROMPT="$ORIGINAL_PROMPT"
+      fi
+    }
+
+    # Call update_prompt before each command
+    precmd_functions+=(update_prompt)
+  '';
 }
 
