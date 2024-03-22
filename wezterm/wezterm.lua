@@ -3,10 +3,10 @@ local mux = wezterm.mux
 local act = wezterm.action
 
 local config = {
-  font = wezterm.font("GeistMono NFM"),
+  font = wezterm.font("Geist Mono"),
   font_size = 16,
   line_height = 1.1,
-  color_scheme = "nordfox",
+  color_scheme = "Catppuccin Mocha (Gogh)",
   leader = { key = "s", mods = "CTRL", timeout_milliseconds = 1500 },
   hide_tab_bar_if_only_one_tab = true,
   tab_bar_at_bottom = true,
@@ -14,7 +14,7 @@ local config = {
   native_macos_fullscreen_mode = false,
   front_end = "OpenGL",
   unicode_version = 14,
-
+  default_prog = { "zsh" },
   background = {
     {
       source = { File = wezterm.config_dir .. "/background.jpg" },
@@ -210,27 +210,23 @@ function IsDefaultStartup(cmd)
   return false
 end
 
-wezterm.on("gui-startup", function(cmd)
-  -- Check if the environment is Windows and set WSL:Ubuntu as the default domain
-  if wezterm.target_triple:match("windows") then
-    local wsl_domain = mux.get_domain("WSL:Ubuntu-20.04")
-    mux.set_default_domain(wsl_domain)
-  else
-    -- For non-Windows environments, set the default to Unix
-    local unix_domain = mux.get_domain("unix")
-    mux.set_default_domain(unix_domain)
-  end
-
-  -- Spawn a single window with the default domain
-  if not cmd or cmd == {} then
-    local tab, pane, window = mux.spawn_window({})
-    window:gui_window():maximize()
-  end
-end)
-
-config.unix_domains = {
-  { name = "unix", connect_automatically = true },
-}
+-- wezterm.on("gui-startup", function(cmd)
+--   -- Check if the environment is Windows and set Windows as the default domain
+--   if wezterm.target_triple:match("windows") then
+--     local wsl_domain = mux.get_domain("WSL:Ubuntu-20.04")
+--     mux.set_default_domain(wsl_domain)
+--   else
+--     -- For non-Windows environments, set the default to Unix
+--     local unix_domain = mux.get_domain("unix")
+--     mux.set_default_domain(unix_domain)
+--   end
+--
+--   -- Spawn a single window with the default domain
+--   if not cmd or cmd == {} then
+--     local tab, pane, window = mux.spawn_window({})
+--     window:gui_window():maximize()
+--   end
+-- end)
 
 local tab_title = function(tab_info)
   local title = tab_info.tab_title
