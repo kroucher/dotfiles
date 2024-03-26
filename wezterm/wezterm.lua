@@ -3,7 +3,7 @@ local mux = wezterm.mux
 local act = wezterm.action
 
 local config = {
-  font = wezterm.font("Geist Mono"),
+  font = wezterm.font("GeistMono Nerd Font Mono"),
   font_size = 16,
   line_height = 1.1,
   color_scheme = "Catppuccin Mocha (Gogh)",
@@ -17,7 +17,7 @@ local config = {
   default_prog = { "zsh" },
   background = {
     {
-      source = { File = wezterm.config_dir .. "/background.jpg" },
+      source = { File = wezterm.config_dir .. "/gaara.jpg" },
       attachment = "Fixed",
       height = "100%",
       width = "100%",
@@ -227,6 +227,11 @@ end
 --     window:gui_window():maximize()
 --   end
 -- end)
+-- The filled in variant of the < symbol
+local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+
+-- The filled in variant of the > symbol
+local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
 
 local tab_title = function(tab_info)
   local title = tab_info.tab_title
@@ -235,58 +240,93 @@ local tab_title = function(tab_info)
   end
   return tab_info.active_pane.title
 end
-
 wezterm.on(
   "format-tab-title",
-  function(tab, tabs, panes, config, hover, max_width) -- Not sure if it will slow down the performance, at least so far it's good
-    -- Is there a better way to get the tab or window cols ?
-    local mux_window = wezterm.mux.get_window(tab.window_id)
-    local mux_tab = mux_window:active_tab()
-    local mux_tab_cols = mux_tab:get_size().cols
+  function(tab, tabs, panes, config, hover, max_width)
+    local edge_background = "#0b0022"
+    local background = "black"
+    local foreground = "#808080"
 
-    -- Calculate active/inactive tab cols
-    -- In general, active tab cols > inactive tab cols
-    local tab_count = #tabs
-    local inactive_tab_cols = math.floor(mux_tab_cols / tab_count)
-    local active_tab_cols = mux_tab_cols - (tab_count - 1) * inactive_tab_cols
+    if tab.is_active then
+      background = "#2b2042"
+      foreground = "#c0c0c0"
+    elseif hover then
+      background = "#3b3052"
+      foreground = "#909090"
+    end
+
+    local edge_foreground = background
 
     local title = tab_title(tab)
-    title = " " .. title .. " "
-    local title_cols = wezterm.column_width(title)
-    local icon = " ⦿"
-    local emptycircle = " ○"
-    local icon_cols = wezterm.column_width(icon)
 
+    -- ensure that the titles fit in the available space,
+    -- and that we have room for the edges.
     title = wezterm.truncate_right(title, max_width - 2)
-    -- Divide into 3 areas and center the title
-    if tab.is_active then
-      local rest_cols = math.max(active_tab_cols - title_cols, 0)
-      local right_cols = math.ceil(rest_cols / 2)
-      return {
-        -- left
-        { Foreground = { Color = "white" } },
-        { Text = wezterm.pad_right(icon, 6) },
-        -- center
-        { Foreground = { Color = "black" } },
-        { Attribute = { Italic = true } },
-        { Text = title },
-        -- right
-        { Text = wezterm.pad_right("", right_cols) },
-      }
-    else
-      local rest_cols = math.max(inactive_tab_cols - title_cols, 0)
-      local right_cols = math.ceil(rest_cols / 2)
-      return {
-        { Text = wezterm.pad_right(emptycircle, 6) },
-        -- center
-        { Attribute = { Italic = true } },
-        { Text = title },
-        -- right
-        { Text = wezterm.pad_right("", 6) },
-      }
-    end
+
+    return {
+      { Background = { Color = edge_background } },
+      { Foreground = { Color = edge_foreground } },
+      { Text = SOLID_LEFT_ARROW },
+      { Background = { Color = background } },
+      { Foreground = { Color = foreground } },
+      { Text = title },
+      { Background = { Color = edge_background } },
+      { Foreground = { Color = edge_foreground } },
+      { Text = SOLID_RIGHT_ARROW },
+    }
   end
 )
+-- wezterm.on(
+--   "format-tab-title",
+--   function(tab, tabs, panes, config, hover, max_width) -- Not sure if it will slow down the performance, at least so far it's good
+--     -- Is there a better way to get the tab or window cols ?
+--     local mux_window = wezterm.mux.get_window(tab.window_id)
+--     local mux_tab = mux_window:active_tab()
+--     local mux_tab_cols = mux_tab:get_size().cols
+--
+--     -- Calculate active/inactive tab cols
+--     -- In general, active tab cols > inactive tab cols
+--     local tab_count = #tabs
+--     local inactive_tab_cols = math.floor(mux_tab_cols / tab_count)
+--     local active_tab_cols = mux_tab_cols - (tab_count - 1) * inactive_tab_cols
+--
+--     local title = tab_title(tab)
+--     title = " " .. title .. " "
+--     local title_cols = wezterm.column_width(title)
+--     local icon = " ⦿"
+--     local emptycircle = " ○"
+--     local icon_cols = wezterm.column_width(icon)
+--
+--     title = wezterm.truncate_right(title, max_width - 2)
+--     -- Divide into 3 areas and center the title
+--     if tab.is_active then
+--       local rest_cols = math.max(active_tab_cols - title_cols, 0)
+--       local right_cols = math.ceil(rest_cols / 2)
+--       return {
+--         -- left
+--         -- { Foreground = { Color = "white" } },
+--         { Text = wezterm.pad_right(icon, 1) },
+--         -- center
+--         { Foreground = { Color = "white" } },
+--         { Attribute = { Italic = true } },
+--         { Text = title },
+--         -- right
+--         { Text = wezterm.pad_right("", right_cols) },
+--       }
+--     else
+--       local rest_cols = math.max(inactive_tab_cols - title_cols, 0)
+--       local right_cols = math.ceil(rest_cols / 2)
+--       return {
+--         { Text = wezterm.pad_right(emptycircle, 1) },
+--         -- center
+--         { Attribute = { Italic = true } },
+--         { Text = title },
+--         -- right
+--         { Text = wezterm.pad_right("", 6) },
+--       }
+--     end
+--   end
+-- )
 
 -- Use the defaults as a base
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
