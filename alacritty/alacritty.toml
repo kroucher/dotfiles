@@ -48,3 +48,9 @@ y = 26
 # [window.position]
 # x = 20
 # y = 75
+#
+[selection]
+save_to_clipboard = true
+
+[mouse]
+bindings = [{ mouse = "Right", mods = "Control", action = "Paste" }]

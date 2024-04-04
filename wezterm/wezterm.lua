@@ -1,12 +1,12 @@
 local wezterm = require("wezterm")
-local mux = wezterm.mux
 local act = wezterm.action
+local session_manager = require("wezterm-session-manager/session-manager")
 
 local config = {
   font = wezterm.font("GeistMono Nerd Font Mono"),
-  font_size = 16,
+  font_size = 13,
   line_height = 1.1,
-  color_scheme = "Catppuccin Mocha (Gogh)",
+  color_scheme = "nightfox",
   leader = { key = "s", mods = "CTRL", timeout_milliseconds = 1500 },
   hide_tab_bar_if_only_one_tab = true,
   tab_bar_at_bottom = true,
@@ -15,23 +15,102 @@ local config = {
   front_end = "OpenGL",
   unicode_version = 14,
   default_prog = { "zsh" },
-  background = {
-    {
-      source = { File = wezterm.config_dir .. "/gaara.jpg" },
-      attachment = "Fixed",
-      height = "100%",
-      width = "100%",
-      -- opacity = 0.90,
-      hsb = { brightness = 0.03 },
-    },
+  window_background_opacity = 0.90,
+  window_decorations = "RESIZE",
+  window_padding = {
+    left = 20,
+    right = 20,
+    top = 20,
+    bottom = 20,
   },
+  -- background = {
+  --   {
+  --     source = { File = wezterm.config_dir .. "/gaara.jpg" },
+  --     attachment = "Fixed",
+  --     height = "100%",
+  --     width = "100%",
+  --     -- opacity = 0.90,
+  --     hsb = { brightness = 0.03 },
+  --   },
+  -- },
 
   inactive_pane_hsb = {
     saturation = 0.5,
     brightness = 0.6,
   },
-}
+  colors = {
+    tab_bar = {
+      -- The color of the strip that goes along the top of the window
+      -- (does not apply when fancy tab bar is in use)
+      background = "rgb(30, 39, 57 / 10%)",
 
+      -- The active tab is the one that has focus in the window
+      active_tab = {
+        -- The color of the background area for the tab
+        bg_color = "rgb(109, 112, 133 / 10%)",
+        -- The color of the text for the tab
+        fg_color = "rgb(239, 241, 245)",
+
+        -- Specify whether you want "Half", "Normal" or "Bold" intensity for the
+        -- label shown for this tab.
+        -- The default is "Normal"
+        intensity = "Bold",
+
+        -- Specify whether you want "None", "Single" or "Double" underline for
+        -- label shown for this tab.
+        -- The default is "None"
+        underline = "None",
+
+        -- Specify whether you want the text to be italic (true) or not (false)
+        -- for this tab.  The default is false.
+        italic = false,
+
+        -- Specify whether you want the text to be rendered with strikethrough (true)
+        -- or not for this tab.  The default is false.
+        strikethrough = false,
+      },
+
+      -- Inactive tabs are the tabs that do not have focus
+      inactive_tab = {
+        bg_color = "rgb(109, 112, 133 / 10%)",
+        fg_color = "#808080",
+
+        -- The same options that were listed under the `active_tab` section above
+        -- can also be used for `inactive_tab`.
+      },
+
+      -- You can configure some alternate styling when the mouse pointer
+      -- moves over inactive tabs
+      inactive_tab_hover = {
+        bg_color = "#3b3052",
+        fg_color = "#909090",
+
+        -- The same options that were listed under the `active_tab` section above
+        -- can also be used for `inactive_tab_hover`.
+      },
+
+      -- The new tab button that let you create new tabs
+      new_tab = {
+        bg_color = "#1b1032",
+        fg_color = "#808080",
+
+        -- The same options that were listed under the `active_tab` section above
+        -- can also be used for `new_tab`.
+      },
+
+      -- You can configure some alternate styling when the mouse pointer
+      -- moves over the new tab button
+      new_tab_hover = {
+        bg_color = "rgb(109, 112, 133 / 10%)",
+        fg_color = "#909090",
+        italic = true,
+
+        -- The same options that were listed under the `active_tab` section above
+        -- can also be used for `new_tab_hover`.
+      },
+    },
+  },
+}
 config.keys = {
   -- Window splits
   {
@@ -165,13 +244,29 @@ config.keys = {
     action = act({ ActivateTab = 9 }),
   },
 
+  -- Save and load sessions
+  {
+    key = "S",
+    mods = "LEADER",
+    action = wezterm.action({ EmitEvent = "save_session" }),
+  },
+  {
+    key = "L",
+    mods = "LEADER",
+    action = wezterm.action({ EmitEvent = "load_session" }),
+  },
+  {
+    key = "R",
+    mods = "LEADER",
+    action = wezterm.action({ EmitEvent = "restore_session" }),
+  },
   -- rename tab
   {
     key = "e",
     mods = "LEADER",
     action = act.PromptInputLine({
       description = "Enter new name for tab",
-      action = wezterm.action_callback(function(window, pane, line)
+      action = wezterm.action_callback(function(window, _, line)
         -- line will be `nil` if they hit escape without entering anything
         -- An empty string if they just hit enter
         -- Or the actual line of text they wrote
@@ -190,6 +285,16 @@ config.keys = {
   },
   { key = "n", mods = "LEADER", action = act.RotatePanes("Clockwise") },
 }
+
+wezterm.on("save_session", function(window)
+  session_manager.save_state(window)
+end)
+wezterm.on("load_session", function(window)
+  session_manager.load_state(window)
+end)
+wezterm.on("restore_session", function(window)
+  session_manager.restore_state(window)
+end)
 
 -- Decide whether cmd represents a default startup invocation
 function IsDefaultStartup(cmd)
@@ -228,54 +333,54 @@ end
 --   end
 -- end)
 -- The filled in variant of the < symbol
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
-
--- The filled in variant of the > symbol
-local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
-
-local tab_title = function(tab_info)
-  local title = tab_info.tab_title
-  if title and #title > 0 then
-    return title
-  end
-  return tab_info.active_pane.title
-end
-wezterm.on(
-  "format-tab-title",
-  function(tab, tabs, panes, config, hover, max_width)
-    local edge_background = "#0b0022"
-    local background = "black"
-    local foreground = "#808080"
-
-    if tab.is_active then
-      background = "#2b2042"
-      foreground = "#c0c0c0"
-    elseif hover then
-      background = "#3b3052"
-      foreground = "#909090"
-    end
-
-    local edge_foreground = background
-
-    local title = tab_title(tab)
-
-    -- ensure that the titles fit in the available space,
-    -- and that we have room for the edges.
-    title = wezterm.truncate_right(title, max_width - 2)
-
-    return {
-      { Background = { Color = edge_background } },
-      { Foreground = { Color = edge_foreground } },
-      { Text = SOLID_LEFT_ARROW },
-      { Background = { Color = background } },
-      { Foreground = { Color = foreground } },
-      { Text = title },
-      { Background = { Color = edge_background } },
-      { Foreground = { Color = edge_foreground } },
-      { Text = SOLID_RIGHT_ARROW },
-    }
-  end
-)
+-- local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+--
+-- -- The filled in variant of the > symbol
+-- local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+--
+-- local tab_title = function(tab_info)
+--   local title = tab_info.tab_title
+--   if title and #title > 0 then
+--     return title
+--   end
+--   return tab_info.active_pane.title
+-- end
+-- wezterm.on(
+--   "format-tab-title",
+--   function(tab, tabs, panes, config, hover, max_width)
+--     local edge_background = "#0b0022"
+--     local background = "black"
+--     local foreground = "#808080"
+--
+--     if tab.is_active then
+--       background = "#2b2042"
+--       foreground = "#c0c0c0"
+--     elseif hover then
+--       background = "#3b3052"
+--       foreground = "#909090"
+--     end
+--
+--     local edge_foreground = background
+--
+--     local title = tab_title(tab)
+--
+--     -- ensure that the titles fit in the available space,
+--     -- and that we have room for the edges.
+--     title = wezterm.truncate_right(title, max_width - 2)
+--
+--     return {
+--       { Background = { Color = edge_background } },
+--       { Foreground = { Color = edge_foreground } },
+--       { Text = SOLID_LEFT_ARROW },
+--       { Background = { Color = background } },
+--       { Foreground = { Color = foreground } },
+--       { Text = title },
+--       { Background = { Color = edge_background } },
+--       { Foreground = { Color = edge_foreground } },
+--       { Text = SOLID_RIGHT_ARROW },
+--     }
+--   end
+-- )
 -- wezterm.on(
 --   "format-tab-title",
 --   function(tab, tabs, panes, config, hover, max_width) -- Not sure if it will slow down the performance, at least so far it's good

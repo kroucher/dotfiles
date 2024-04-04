@@ -2,8 +2,8 @@ return {
   {
     "williamboman/mason-lspconfig.nvim",
     dependencies = { "williamboman/mason.nvim" },
-    opts = {
-      ensure_installed = {
+    opts = function(_, opts)
+      opts.ensure_installed = {
         "beautysh",
         "codelldb",
         "docker-compose-language-service",
@@ -16,7 +16,6 @@ return {
         "markdownlint",
         "marksman",
         "prettier",
-        "rust-analyzer",
         "shellcheck",
         "shfmt",
         "stylua",
@@ -24,7 +23,15 @@ return {
         "taplo",
         "typescript-language-server",
         "yaml-language-server",
-      },
-    },
+      }
+
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "codelldb" })
+
+      require("mason-lspconfig").setup_handlers({
+        ["rust_analyzer"] = function() end,
+      })
+      return opts
+    end,
   },
 }
