@@ -2,6 +2,63 @@ local wezterm = require("wezterm")
 local act = wezterm.action
 local session_manager = require("wezterm-session-manager/session-manager")
 
+local function is_vim(pane)
+  local process_info = pane:get_foreground_process_info()
+  local process_name = process_info and process_info.name
+
+  return process_name == "nvim" or process_name == "vim"
+end
+
+local direction_keys = {
+  Left = "h",
+  Down = "j",
+  Up = "k",
+  Right = "l",
+  -- reverse lookup
+  h = "Left",
+  j = "Down",
+  k = "Up",
+  l = "Right",
+}
+
+local function split_nav(resize_or_move, key)
+  return {
+    key = key,
+    mods = resize_or_move == "resize" and "META" or "CTRL",
+    action = wezterm.action_callback(function(win, pane)
+      if is_vim(pane) then
+        -- pass the keys through to vim/nvim
+        win:perform_action({
+          SendKey = {
+            key = key,
+            mods = resize_or_move == "resize" and "META" or "CTRL",
+          },
+        }, pane)
+      else
+        if resize_or_move == "resize" then
+          win:perform_action(
+            { AdjustPaneSize = { direction_keys[key], 3 } },
+            pane
+          )
+        else
+          win:perform_action(
+            { ActivatePaneDirection = direction_keys[key] },
+            pane
+          )
+        end
+      end
+    end),
+  }
+end
+
+local function find_vim_pane(tab)
+  for _, pane in ipairs(tab:panes()) do
+    if is_vim(pane) then
+      return pane
+    end
+  end
+end
+
 local config = {
   font = wezterm.font("GeistMono Nerd Font Mono"),
   font_size = 13,
@@ -284,6 +341,28 @@ config.keys = {
     action = act.RotatePanes("CounterClockwise"),
   },
   { key = "n", mods = "LEADER", action = act.RotatePanes("Clockwise") },
+
+  -- open terminal popup
+  {
+    key = ";",
+    mods = "LEADER",
+    action = wezterm.action_callback(function(_, pane)
+      local tab = pane:tab()
+      local panes = tab:panes_with_info()
+      if #panes == 1 then
+        pane:split({
+          direction = "Bottom",
+          size = 0.4,
+        })
+      elseif not panes[1].is_zoomed then
+        panes[1].pane:activate()
+        tab:set_zoomed(true)
+      elseif panes[1].is_zoomed then
+        tab:set_zoomed(false)
+        panes[2].pane:activate()
+      end
+    end),
+  },
 }
 
 wezterm.on("save_session", function(window)

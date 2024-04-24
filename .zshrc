@@ -139,3 +139,5 @@ esac
 # fnm
 export PATH="/home/user/.local/share/fnm:$PATH"
 eval "$(fnm env)"
+
+. ~/.config/shell-integration.sh

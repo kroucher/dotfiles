@@ -85,6 +85,12 @@ return {
       vim.cmd("colorscheme nightfox")
     end,
   },
+  {
+    "brenoprata10/nvim-highlight-colors",
+    config = function()
+      require("nvim-highlight-colors").setup({})
+    end,
+  },
 
   -- {
   --   "oxfist/night-owl.nvim",

@@ -41,8 +41,7 @@ return {
           exe = "prettier",
           args = function()
             local args = { "--stdin-filepath", "$FILENAME" }
-            ---@diagnostic disable-next-line: unused-local self
-            require("conform.formatters.prettier").args = function(self, ctx)
+            require("conform.formatters.prettier").args = function(_, ctx)
               local prettier_roots = {
                 ".prettierrc",
                 ".prettierrc.json",
@@ -86,7 +85,8 @@ return {
                   { "--plugin", "prettier-plugin-tailwindcss" }
                 )
               end
-              print(vim.inspect(args))
+              return args
+              -- print(vim.inspect(args))
             end
             return args
           end,

@@ -20,15 +20,16 @@ return {
     opts = function(_, opts)
       -- Set LspInfo border
       require("lspconfig.ui.windows").default_options.border = BORDER_STYLE
+
       return opts
     end,
   },
-  {
-    "mason.nvim",
-    opts = {
-      ui = { border = BORDER_STYLE },
-    },
-  },
+  -- {
+  --   "mason.nvim",
+  --   opts = {
+  --     ui = { border = BORDER_STYLE },
+  --   },
+  -- },
   -- lazyvim.plugins.ui
   {
     "noice.nvim",

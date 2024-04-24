@@ -1,5 +1,5 @@
 return {
-  "tamton-aquib/mpv.nvim",
+  dir = "~/mpv.nvim",
   config = function()
     require("mpv").setup({
       width = 50,

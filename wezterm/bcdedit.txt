@@ -1,0 +1,187 @@
+
+Firmware Boot Manager
+---------------------
+identifier              {fwbootmgr}
+displayorder            {bootmgr}
+                        {00522ba4-f6b2-11ee-9cdf-806e6f6e6963}
+                        {00522ba5-f6b2-11ee-9cdf-806e6f6e6963}
+                        {00522ba6-f6b2-11ee-9cdf-806e6f6e6963}
+                        {00522ba7-f6b2-11ee-9cdf-806e6f6e6963}
+                        {00522ba8-f6b2-11ee-9cdf-806e6f6e6963}
+                        {00522ba9-f6b2-11ee-9cdf-806e6f6e6963}
+                        {00522baa-f6b2-11ee-9cdf-806e6f6e6963}
+timeout                 2
+
+Windows Boot Manager
+--------------------
+identifier              {bootmgr}
+device                  partition=\Device\HarddiskVolume1
+path                    \EFI\Microsoft\Boot\bootmgfw.efi
+description             Windows Boot Manager
+locale                  en-US
+inherit                 {globalsettings}
+default                 {current}
+resumeobject            {f40e06bb-f6b9-11ee-8c6e-18dbf2ffe947}
+displayorder            {current}
+                        {cf691c8d-f6b9-11ee-8c6e-18dbf2ffe947}
+toolsdisplayorder       {memdiag}
+timeout                 30
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522ba4-f6b2-11ee-9cdf-806e6f6e6963}
+description             Diskette Drive
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522ba5-f6b2-11ee-9cdf-806e6f6e6963}
+description             Apacer SM230 25 SATA 512GB
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522ba6-f6b2-11ee-9cdf-806e6f6e6963}
+description             USB Storage Device
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522ba7-f6b2-11ee-9cdf-806e6f6e6963}
+description             CD/DVD/CD-RW Drive
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522ba8-f6b2-11ee-9cdf-806e6f6e6963}
+description             Onboard NIC #1
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522ba9-f6b2-11ee-9cdf-806e6f6e6963}
+description             Onboard NIC #2
+
+Firmware Application (101fffff)
+-------------------------------
+identifier              {00522baa-f6b2-11ee-9cdf-806e6f6e6963}
+device                  partition=\Device\HarddiskVolume1
+path                    EFI\Microsoft\Boot\bootmgfw.efi
+description             UEFI: Apacer SM230 25 SATA 512GB
+
+Windows Boot Loader
+-------------------
+identifier              {4223b2cb-f6b2-11ee-9cdf-18dbf2ffe947}
+device                  ramdisk=[C:]\Recovery\WindowsRE\Winre.wim,{4223b2cc-f6b2-11ee-9cdf-18dbf2ffe947}
+path                    \windows\system32\winload.efi
+description             Windows Recovery Environment
+locale                  en-us
+inherit                 {bootloadersettings}
+displaymessage          Recovery
+osdevice                ramdisk=[C:]\Recovery\WindowsRE\Winre.wim,{4223b2cc-f6b2-11ee-9cdf-18dbf2ffe947}
+systemroot              \windows
+nx                      OptIn
+bootmenupolicy          Standard
+winpe                   Yes
+
+Windows Boot Loader
+-------------------
+identifier              {cf691c8d-f6b9-11ee-8c6e-18dbf2ffe947}
+device                  vhd=[D:]\WinPE-VHD\WinPE_CURRENT.vhd
+path                    \Windows\system32\winload.efi
+description             RhizomerSystem
+locale                  en-us
+inherit                 {bootloadersettings}
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+osdevice                vhd=[D:]\WinPE-VHD\WinPE_CURRENT.vhd
+systemroot              \Windows
+nx                      OptOut
+winpe                   Yes
+
+Windows Boot Loader
+-------------------
+identifier              {current}
+device                  partition=C:
+path                    \Windows\system32\winload.efi
+description             RhizomerData
+locale                  en-US
+inherit                 {bootloadersettings}
+recoverysequence        {4223b2cb-f6b2-11ee-9cdf-18dbf2ffe947}
+displaymessageoverride  Recovery
+recoveryenabled         Yes
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+osdevice                partition=C:
+systemroot              \Windows
+resumeobject            {f40e06bb-f6b9-11ee-8c6e-18dbf2ffe947}
+nx                      OptIn
+bootmenupolicy          Standard
+
+Resume from Hibernate
+---------------------
+identifier              {f40e06bb-f6b9-11ee-8c6e-18dbf2ffe947}
+device                  partition=C:
+path                    \Windows\system32\winresume.efi
+description             Windows Resume Application
+locale                  en-US
+inherit                 {resumeloadersettings}
+recoverysequence        {4223b2cb-f6b2-11ee-9cdf-18dbf2ffe947}
+recoveryenabled         Yes
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+filedevice              partition=C:
+filepath                \hiberfil.sys
+bootmenupolicy          Standard
+debugoptionenabled      No
+
+Windows Memory Tester
+---------------------
+identifier              {memdiag}
+device                  partition=\Device\HarddiskVolume1
+path                    \EFI\Microsoft\Boot\memtest.efi
+description             Windows Memory Diagnostic
+locale                  en-US
+inherit                 {globalsettings}
+badmemoryaccess         Yes
+
+EMS Settings
+------------
+identifier              {emssettings}
+bootems                 No
+
+Debugger Settings
+-----------------
+identifier              {dbgsettings}
+debugtype               Local
+
+RAM Defects
+-----------
+identifier              {badmemory}
+
+Global Settings
+---------------
+identifier              {globalsettings}
+inherit                 {dbgsettings}
+                        {emssettings}
+                        {badmemory}
+
+Boot Loader Settings
+--------------------
+identifier              {bootloadersettings}
+inherit                 {globalsettings}
+                        {hypervisorsettings}
+
+Hypervisor Settings
+-------------------
+identifier              {hypervisorsettings}
+hypervisordebugtype     Serial
+hypervisordebugport     1
+hypervisorbaudrate      115200
+
+Resume Loader Settings
+----------------------
+identifier              {resumeloadersettings}
+inherit                 {globalsettings}
+
+Device options
+--------------
+identifier              {4223b2cc-f6b2-11ee-9cdf-18dbf2ffe947}
+description             Windows Recovery
+ramdisksdidevice        partition=C:
+ramdisksdipath          \Recovery\WindowsRE\boot.sdi
