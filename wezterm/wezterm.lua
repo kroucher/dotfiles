@@ -1,6 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
-local session_manager = require("wezterm-session-manager/session-manager")
+-- local session_manager = require("wezterm-session-manager/session-manager")
 
 local config = {
   font = wezterm.font("GeistMono Nerd Font Mono"),
@@ -23,16 +23,16 @@ local config = {
     top = 20,
     bottom = 20,
   },
-  -- background = {
-  --   {
-  --     source = { File = wezterm.config_dir .. "/gaara.jpg" },
-  --     attachment = "Fixed",
-  --     height = "100%",
-  --     width = "100%",
-  --     -- opacity = 0.90,
-  --     hsb = { brightness = 0.03 },
-  --   },
-  -- },
+  background = {
+    {
+      source = { File = wezterm.config_dir .. "/gaara.jpg" },
+      attachment = "Fixed",
+      height = "100%",
+      width = "100%",
+      -- opacity = 0.90,
+      hsb = { brightness = 0.03 },
+    },
+  },
 
   inactive_pane_hsb = {
     saturation = 0.5,
