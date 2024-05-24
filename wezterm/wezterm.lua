@@ -80,16 +80,16 @@ local config = {
     top = 20,
     bottom = 20,
   },
-  -- background = {
-  --   {
-  --     source = { File = wezterm.config_dir .. "/gaara.jpg" },
-  --     attachment = "Fixed",
-  --     height = "100%",
-  --     width = "100%",
-  --     -- opacity = 0.90,
-  --     hsb = { brightness = 0.03 },
-  --   },
-  -- },
+  background = {
+    {
+      source = { File = wezterm.config_dir .. "/gaara.jpg" },
+      attachment = "Fixed",
+      height = "100%",
+      width = "100%",
+      -- opacity = 0.90,
+      hsb = { brightness = 0.02 },
+    },
+  },
 
   inactive_pane_hsb = {
     saturation = 0.5,
@@ -531,7 +531,7 @@ table.insert(config.hyperlink_rules, {
 -- github or gitlab / bitbucket (i.e. https://gitlab.com/user/project.git is still a whole clickable url)
 table.insert(config.hyperlink_rules, {
   regex = [[["]?([\w\d]{1}[-\w\d]+)(/){1}([-\w\d\.]+)["]?]],
-  format = "https://www.github.com/$1/$3",
+  format = "https://www.github.com/rhizomer/ruzomer/tree/$1/$3",
 })
 
 return config

@@ -1,11 +1,12 @@
 lastupdatecheck: 0
 recentrepos:
 - C:\Users\Daniel\.config
-- C:\Users\Daniel\rhizomer
 - C:\Users\Daniel\ruzomer
+- C:\Users\Daniel\oximigrate
+- C:\Users\Daniel\rhizomer
 - C:\Users\Daniel\test-diskpart
 - C:\Users\Daniel\mpv.nvim
 startuppopupversion: 5
 customcommandshistory: []
 hidecommandlog: false
-ignorewhitespaceindiffview: false
+ignorewhitespaceindiffview: true

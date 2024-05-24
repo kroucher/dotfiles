@@ -12,7 +12,7 @@ return {
   --   end,
   -- },
   -- {
-  -- "scottmckendry/cyberdream.nvim",
+  --   "scottmckendry/cyberdream.nvim",
   --   lazy = false,
   --   priority = 1000,
   --   config = function()
@@ -28,7 +28,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "nightfox",
+      colorscheme = "catppuccin",
     },
   },
   {

@@ -140,4 +140,13 @@ esac
 export PATH="/home/user/.local/share/fnm:$PATH"
 eval "$(fnm env)"
 
+function yy() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
 . ~/.config/shell-integration.sh

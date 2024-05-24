@@ -36,8 +36,6 @@ return {
           "json",
           "http",
           "lua",
-          "markdown",
-          "markdown_inline",
           "python",
           "prisma",
           "query",
