@@ -1,0 +1,9 @@
+return {
+  dir = "~/.config/nvim/graphite.nvim/",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "grapp-dev/nui-components.nvim",
+    "MunifTanjim/nui.nvim",
+  },
+  opts = true,
+}

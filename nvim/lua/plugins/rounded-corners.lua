@@ -1,11 +1,7 @@
 -- Set border of some LazyVim plugins to rounded
-
 local BORDER_STYLE = "rounded"
 
 return {
-  -- lazyvim.plugins.coding
-
-  -- lazyvim.plugins.editor
   {
     "which-key.nvim",
     opts = { window = { border = BORDER_STYLE } },
@@ -14,7 +10,6 @@ return {
     "gitsigns.nvim",
     opts = { preview_config = { border = BORDER_STYLE } },
   },
-  -- lazyvim.plugins.lsp
   {
     "nvim-lspconfig",
     opts = function(_, opts)
@@ -29,7 +24,6 @@ return {
       ui = { border = BORDER_STYLE },
     },
   },
-  -- lazyvim.plugins.ui
   {
     "noice.nvim",
     opts = {

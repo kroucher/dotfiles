@@ -15,12 +15,12 @@ end
 -- local lfs = require("lfs")
 local autocmd = vim.api.nvim_create_autocmd
 
-local function db_completion()
-  ---@diagnostic disable-next-line: missing-fields
-  require("cmp").setup.buffer({
-    sources = { { name = "vim-dadbod-completion" } },
-  })
-end
+-- local function db_completion()
+--   ---@diagnostic disable-next-line: missing-fields
+--   require("cmp").setup.buffer({
+--     sources = { { name = "vim-dadbod-completion" } },
+--   })
+-- end
 
 vim.g.db_ui_save_location = vim.fn.stdpath("config")
   .. require("plenary.path").path.sep
@@ -33,16 +33,16 @@ autocmd("FileType", {
   command = [[setlocal omnifunc=vim_dadbod_completion#omni]],
 })
 
-autocmd("FileType", {
-  pattern = {
-    "sql",
-    "mysql",
-    "plsql",
-  },
-  callback = function()
-    vim.schedule(db_completion)
-  end,
-})
+-- autocmd("FileType", {
+--   pattern = {
+--     "sql",
+--     "mysql",
+--     "plsql",
+--   },
+--   callback = function()
+--     vim.schedule(db_completion)
+--   end,
+-- })
 
 -- Disable Highlight on yank
 autocmd("TextYankPost", {
@@ -166,6 +166,7 @@ autocmd("BufWritePre", {
             apply = true,
             context = {
               only = { "source.addMissingImports.ts" },
+              diagnostics = r.diagnostics,
             },
           })
           vim.cmd("write")
@@ -174,3 +175,5 @@ autocmd("BufWritePre", {
     end
   end,
 })
+
+vim.g.format_on_save = true

@@ -1,0 +1,5 @@
+return {
+  dir = "~/.config/nvim/test_plugin/",
+  lazy = false,
+  module = false,
+}

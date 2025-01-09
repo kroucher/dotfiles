@@ -16,7 +16,7 @@ return {
   opts = function()
     local opts = {
       format = {
-        timeout_ms = 3000,
+        timeout_ms = 10000,
         lsp_fallback = true,
         async = false,
         quiet = false,
@@ -31,6 +31,7 @@ return {
         markdown = { "prettier" },
         scss = { "prettier" },
         sh = { "beautysh" },
+        sql = { "sqlfluff" },
         typescript = { "prettier" },
         typescriptreact = { "prettier" },
         yaml = { "prettier" },
@@ -96,6 +97,15 @@ return {
             "--indent-size 2",
             "--force-function-style fnpar",
           },
+        },
+        sqlfluff = {
+          exe = "sqlfluff",
+          args = {
+            "fix",
+            "--dialect=sqlite",
+            "-",
+          },
+          async = true,
         },
       },
     }

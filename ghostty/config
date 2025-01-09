@@ -1,0 +1,50 @@
+title = ""
+
+background-opacity = 0.9
+background-blur-radius = 30
+unfocused-split-opacity = 0.95
+
+font-size = 16
+
+font-family = GeistMono Nerd Font
+
+theme = tokyonight
+
+macos-non-native-fullscreen = false
+fullscreen = false
+window-decoration = true
+
+window-padding-y = 36,0
+
+# reload config
+keybind = super+shift+comma=reload_config
+
+# new splits
+keybind = ctrl+s>shift+'=new_split:down
+keybind = ctrl+s>shift+5=new_split:right
+
+# resize splits
+keybind = cmd+j=resize_split:down,20
+keybind = cmd+k=resize_split:up,20
+keybind = cmd+l=resize_split:right,20
+keybind = cmd+h=resize_split:left,21
+
+# move between splits
+keybind = ctrl+j=goto_split:bottom
+keybind = ctrl+k=goto_split:top
+keybind = ctrl+l=goto_split:right
+keybind = ctrl+h=goto_split:left
+
+# quick terminal
+keybind = ctrl+s>t=toggle_quick_terminal
+
+# tabs
+keybind = ctrl+s>c=new_tab
+keybind = ctrl+s>1=goto_tab:1
+keybind = ctrl+s>2=goto_tab:2
+keybind = ctrl+s>3=goto_tab:3
+keybind = ctrl+s>4=goto_tab:4
+keybind = ctrl+s>5=goto_tab:5
+keybind = ctrl+s>6=goto_tab:6
+
+keybind = ctrl+c=text:\x03

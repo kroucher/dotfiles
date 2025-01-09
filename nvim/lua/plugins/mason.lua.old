@@ -18,6 +18,7 @@ return {
         "prettier",
         "shellcheck",
         "shfmt",
+        "sqlfluff",
         "stylua",
         "tailwindcss-language-server",
         "taplo",

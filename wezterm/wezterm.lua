@@ -3,10 +3,10 @@ local act = wezterm.action
 -- local session_manager = require("wezterm-session-manager/session-manager")
 
 local config = {
-  font = wezterm.font("GeistMono Nerd Font Mono"),
-  font_size = 13,
+  font = wezterm.font("GeistMono Nerd Font"),
+  font_size = 16,
   line_height = 1.1,
-  color_scheme = "nightfox",
+  color_scheme = "tokyonight",
   leader = { key = "s", mods = "CTRL", timeout_milliseconds = 1500 },
   hide_tab_bar_if_only_one_tab = true,
   tab_bar_at_bottom = true,
@@ -17,27 +17,27 @@ local config = {
   default_prog = { "zsh" },
   window_background_opacity = 0.90,
   window_decorations = "RESIZE",
-  window_padding = {
-    left = 20,
-    right = 20,
-    top = 20,
-    bottom = 20,
-  },
-  background = {
-    {
-      source = { File = wezterm.config_dir .. "/gaara.jpg" },
-      attachment = "Fixed",
-      height = "100%",
-      width = "100%",
-      -- opacity = 0.90,
-      hsb = { brightness = 0.03 },
-    },
-  },
+  -- window_padding = {
+  --   left = 20,
+  --   right = 20,
+  --   top = 20,
+  --   bottom = 20,
+  -- },
+  -- background = {
+  --   {
+  --     source = { File = wezterm.config_dir .. "/gaara.jpg" },
+  --     attachment = "Fixed",
+  --     height = "100%",
+  --     width = "100%",
+  --     -- opacity = 0.90,
+  --     hsb = { brightness = 0.03 },
+  --   },
+  -- },
 
-  inactive_pane_hsb = {
-    saturation = 0.5,
-    brightness = 0.6,
-  },
+  -- inactive_pane_hsb = {
+  --   saturation = 0.5,
+  --   brightness = 0.6,
+  -- },
   colors = {
     tab_bar = {
       -- The color of the strip that goes along the top of the window
@@ -276,6 +276,12 @@ config.keys = {
       end),
     }),
   },
+  -- toggle fullscreen
+  {
+    key = "f",
+    mods = "LEADER",
+    action = wezterm.action.ToggleFullScreen,
+  },
 
   -- rotate panes
   {
@@ -286,34 +292,34 @@ config.keys = {
   { key = "n", mods = "LEADER", action = act.RotatePanes("Clockwise") },
 }
 
-wezterm.on("save_session", function(window)
-  session_manager.save_state(window)
-end)
-wezterm.on("load_session", function(window)
-  session_manager.load_state(window)
-end)
-wezterm.on("restore_session", function(window)
-  session_manager.restore_state(window)
-end)
+-- wezterm.on("save_session", function(window)
+--   session_manager.save_state(window)
+-- end)
+-- wezterm.on("load_session", function(window)
+--   session_manager.load_state(window)
+-- end)
+-- wezterm.on("restore_session", function(window)
+--   session_manager.restore_state(window)
+-- end)
 
 -- Decide whether cmd represents a default startup invocation
-function IsDefaultStartup(cmd)
-  if wezterm.target_triple:match("windows") then
-    -- On Windows, use WSL2 as the default domain
-    return true
-  end
-  if not cmd then
-    -- we were started with `wezterm` or `wezterm start` with
-    -- no other arguments
-    return true
-  end
-  if cmd.domain == "DefaultDomain" and not cmd.args then
-    -- Launched via `wezterm start --cwd something`
-    return true
-  end
-  -- we were launched some other way
-  return false
-end
+-- function IsDefaultStartup(cmd)
+--   if wezterm.target_triple:match("windows") then
+--     -- On Windows, use WSL2 as the default domain
+--     return true
+--   end
+--   if not cmd then
+--     -- we were started with `wezterm` or `wezterm start` with
+--     -- no other arguments
+--     return true
+--   end
+--   if cmd.domain == "DefaultDomain" and not cmd.args then
+--     -- Launched via `wezterm start --cwd something`
+--     return true
+--   end
+--   -- we were launched some other way
+--   return false
+-- end
 
 -- wezterm.on("gui-startup", function(cmd)
 --   -- Check if the environment is Windows and set Windows as the default domain
